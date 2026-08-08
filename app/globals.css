@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #FDF6EC;
+  color: #2B1B12;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-text-dark antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: #E8A33D;
+  color: white;
+}
+
+button,
+a,
+input,
+textarea {
+  font: inherit;
+}
+
+input,
+textarea {
+  @apply rounded-3xl border border-[#d9c8b1] bg-white/90 px-4 py-3 text-text-dark outline-none transition-shadow focus:ring-2 focus:ring-accent-gold;
+}
+
+section {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  section {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  section {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}

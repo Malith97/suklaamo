@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-label="Hero placeholder image">
+  <rect width="1200" height="1200" fill="#f8eed9"/>
+  <rect x="80" y="80" width="1040" height="1040" rx="60" fill="#ecd7be"/>
+  <text x="600" y="550" text-anchor="middle" font-family="Fredoka, Arial, sans-serif" font-size="72" fill="#3A2317">Bakery hero image</text>
+  <text x="600" y="650" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="38" fill="#5a4030">Placeholder for premium product photography</text>
+</svg>
