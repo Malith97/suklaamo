@@ -7,11 +7,14 @@ const fredoka = Fredoka({ subsets: ['latin'], weight: ['400', '700'], variable: 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Suklaamo | Finnish chocolate bakery',
-  description: 'Suklaamo is a home bakery in Oulu making small-batch chocolate brownies, cookies, and cakes for local pickup and pre-order.',
+  title: 'Suklaamo | Premium Finnish chocolate bakery in Oulu',
+  description:
+    'Suklaamo is a Finnish home bakery in Oulu crafting small-batch chocolate brownies, cookies and small cakes for local pickup and pre-order.',
+  keywords: ['Suklaamo', 'Finnish bakery', 'Oulu bakery', 'chocolate brownies', 'chocolate cookies', 'small cakes', 'home bakery', 'pickup bakery', 'handmade bakery'],
   openGraph: {
-    title: 'Suklaamo | Finnish chocolate bakery',
-    description: 'A home bakery in Oulu offering small-batch chocolate brownies, cookies, and cakes for local pickup.',
+    title: 'Suklaamo | Premium Finnish chocolate bakery in Oulu',
+    description:
+      'Handmade chocolate brownies, cookies and cakes from a Finnish home bakery in Oulu, ready for local pickup and pre-order.',
     type: 'website',
   },
   twitter: {
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fredoka.variable} ${inter.variable}`}>
-      <body className="pt-12">
+      <body className="pt-12 bg-background text-text-dark">
         <PromoTicker />
         {children}
       </body>

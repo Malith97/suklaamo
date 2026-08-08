@@ -10,25 +10,25 @@ export default function ContactPage() {
           <div className="rounded-[3rem] bg-white p-8 shadow-soft sm:p-10">
             <p className="text-sm uppercase tracking-[0.35em] text-primary">Get in touch</p>
             <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">Reserve your handcrafted chocolate treats for pickup in Oulu.</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-[#5a4030] sm:text-base">
-              Send your request through the form, Instagram, or email. We’ll reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-[#5a4030] sm:text-base">
+              Send your request through the form, Instagram, Whatsapp or email. We’ll reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.
             </p>
 
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
               <div className="rounded-[2.5rem] bg-[#fff4dd] p-6 shadow-soft">
-                <p className="text-sm uppercase tracking-[0.35em] text-primary">Pickup location</p>
-                <p className="mt-4 text-sm leading-7 text-[#5a4030]">Peltolankaari 20, 90230 Oulu, Finland</p>
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup location</p>
+                <p className="mt-2 text-sm leading-7 text-[#5a4030]">Peltolankaari 20, 90230, Oulu, Finland</p>
               </div>
               <div className="rounded-[2.5rem] bg-[#fff4dd] p-6 shadow-soft">
-                <p className="text-sm uppercase tracking-[0.35em] text-primary">Pickup hours</p>
-                <p className="mt-4 text-sm leading-7 text-[#5a4030]">Tue–Fri 11:00–18:00 · Sat 10:00–15:00</p>
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup hours</p>
+                <p className="mt-2 text-sm leading-7 text-[#5a4030]">Fri 17:00–21:00 · Sat-Sunday 16:00–20:00</p>
               </div>
             </div>
 
             <div className="mt-10 rounded-[3rem] bg-[#fff8e8] p-8 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Order note</p>
-              <p className="mt-4 text-sm leading-7 text-[#5a4030]">
-                Checkout is not available yet. Use the form below or DM us on Instagram and we’ll confirm your order with a pickup window that works for you.
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order note</p>
+              <p className="mt-2 text-sm leading-7 text-[#5a4030]">
+                Checkout is not available yet. Use the form below or DM us on Instagram/Whatsapp and we’ll confirm your order with a pickup window that works for you.
               </p>
             </div>
 

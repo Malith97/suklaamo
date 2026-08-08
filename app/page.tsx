@@ -4,7 +4,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SectionHeading from '../components/SectionHeading';
 import CategoryPill from '../components/CategoryPill';
-import Badge from '../components/Badge';
 import TestimonialCard from '../components/TestimonialCard';
 import { products } from '../data/products';
 
@@ -21,53 +20,36 @@ export default function Home() {
       <Navbar />
 
       <section className="container mx-auto py-16 lg:py-20">
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div className="space-y-8">
-            <div className="rounded-[3rem] border border-[#e8d5ba] bg-[#fff6ea] p-8 shadow-soft sm:p-10">
-              <p className="text-sm uppercase tracking-[0.45em] text-primary">Suklaamo</p>
-              <h1 className="mt-4 text-4xl font-black uppercase leading-tight tracking-[-0.05em] text-primary sm:text-5xl lg:text-6xl">
-                Home-baked Finnish
-                <span className="block text-accent-gold">Chocolate treats</span>
-              </h1>
-              <p className="mt-6 max-w-2xl text-base leading-7 text-[#5a4030] sm:text-lg">
-                I bake brownies, cookies and cakes for pickup in Oulu. Everything is made in my kitchen with simple ingredients and a lot of care.
-              </p>
-              <div className="flex flex-wrap gap-3 pt-4">
-                <Link href="/contact" className="inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#d38a24]">
-                  Reserve a batch
-                </Link>
-                <Link href="/catalogue" className="inline-flex rounded-full border border-[#d9c8b1] bg-white px-6 py-3 text-sm font-semibold text-primary shadow-soft transition hover:bg-[#fff5df]">
-                  Explore menu
-                </Link>
-              </div>
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="space-y-6">
+            <p className="text-sm uppercase tracking-[0.45em] text-accent-gold">Suklaamo</p>
+            <h1 className="text-5xl font-black uppercase leading-tight tracking-[-0.05em] text-primary sm:text-6xl lg:text-7xl">
+              Home-baked Finnish
+              <span className="block text-accent-cocoa">chocolate treats</span>
+            </h1>
+            <p className="max-w-2xl text-base leading-8 text-[#5a4030] sm:text-lg">
+              Every treat comes from my kitchen in Oulu. Brownies, cookies and small cakes made with good chocolate, a steady coffee and a warm welcome.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/contact" className="inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#d38a24]">
+                Reserve a batch
+              </Link>
+              <Link href="/catalogue" className="inline-flex rounded-full border border-[#d9c8b1] bg-white px-6 py-3 text-sm font-semibold text-primary shadow-soft transition hover:bg-[#fff5df]">
+                Explore menu
+              </Link>
             </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[3rem] bg-white p-7 shadow-soft">
-                <p className="text-sm uppercase tracking-[0.35em] text-primary">Featured treat</p>
-                <h2 className="mt-4 text-2xl font-bold text-primary">{featured.name}</h2>
-                <p className="mt-3 text-sm leading-7 text-[#5a4030]">{featured.description}</p>
-                <p className="mt-5 text-lg font-semibold text-primary">{featured.price}</p>
-              </div>
-              <div className="rounded-[3rem] bg-[#fff4df] p-7 shadow-soft">
-                <p className="text-sm uppercase tracking-[0.35em] text-primary">Why choose us</p>
-                <p className="mt-4 text-sm leading-6 text-[#5a4030]">
-                  I keep the kitchen small so every batch feels fresh and familiar.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {categories.map((category) => (
-                    <CategoryPill key={category.label} label={category.label} count={category.count} />
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* <div className="grid gap-3 sm:grid-cols-3">
+              {categories.map((category) => (
+                <CategoryPill key={category.label} label={category.label} count={category.count} />
+              ))}
+            </div> */}
           </div>
 
-          <div className="relative overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft">
-            <div className="absolute left-5 top-6 rounded-full bg-accent-sage/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-accent-sage shadow-soft">
-              Warm batch
-            </div>
-            <div className="relative h-[420px] sm:h-[520px]">
+          <div className="relative overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
+                <div className="absolute left-5 top-6 rounded-full bg-accent-sage/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-accent-sage shadow-soft">
+                Warm batch
+                </div>
+            <div className="relative h-[420px] sm:h-[640px]">
               <Image src="/gallery/hero-2.webp" alt="Chocolate bakery product showcase" fill className="object-cover" />
             </div>
           </div>
@@ -128,45 +110,55 @@ export default function Home() {
             </div>
           </div>
           <div className="rounded-[3rem] bg-white p-8 shadow-soft">
-            <TestimonialCard quote="The brownies taste like a warm hug — decadent, fresh, and just perfect for a cozy evening." name="Milla, Helsinki" />
+            <TestimonialCard quote="The brownies taste like a warm hug. decadent, fresh, and just perfect for a cozy evening." name="Minna, Oulu" />
           </div>
         </div>
       </section>
 
-      <section className="container mx-auto rounded-[3rem] bg-[#eaf2e8] p-10 shadow-soft sm:p-12">
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+      <section className="container mx-auto rounded-[3rem] bg-[#f4e2d0] p-10 sm:p-12 mb-12 shadow-soft">
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div>
-            <p className="uppercase tracking-[0.35em] text-primary">Bakery stats</p>
+            <p className="uppercase tracking-[0.35em] text-primary">Loved by locals</p>
             <h2 className="mt-4 text-3xl font-black text-primary sm:text-4xl">Loved by locals across Oulu and beyond</h2>
-            <div className="mt-2 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-[2rem] bg-white p-5 text-center shadow-soft">
-                <p className="text-3xl font-black text-primary">4.9</p>
-                <p className="mt-2 text-sm uppercase tracking-[0.3em] text-[#5a4030]">Average rating</p>
+            <p className="mt-5 max-w-3xl text-base leading-8 text-[#5a4030]">
+              These treats turn quiet coffee moments into something to look forward to. People bring brownies for birthdays, small cakes for family gatherings and cookies to share after a morning walk.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-[2rem] bg-white p-6 text-sm leading-7 shadow-soft">
+                <p className="font-semibold text-primary">Birthday boxes</p>
+                <p className="mt-3 text-[#5a4030]">A small tray of favourites makes the celebration feel personal.</p>
               </div>
-              <div className="rounded-[2rem] bg-white p-5 text-center shadow-soft">
-                <p className="text-3xl font-black text-primary">320+</p>
-                <p className="mt-2 text-sm uppercase tracking-[0.3em] text-[#5a4030]">Reviews</p>
+              <div className="rounded-[2rem] bg-white p-6 text-sm leading-7 shadow-soft">
+                <p className="font-semibold text-primary">Coffee moments</p>
+                <p className="mt-3 text-[#5a4030]">A little sweet to go with a morning cup or an afternoon break.</p>
               </div>
-              <div className="rounded-[2rem] bg-white p-5 text-center shadow-soft">
-                <p className="text-3xl font-black text-primary">10k+</p>
-                <p className="mt-2 text-sm uppercase tracking-[0.3em] text-[#5a4030]">Instagram followers</p>
+              <div className="rounded-[2rem] bg-white p-6 text-sm leading-7 shadow-soft">
+                <p className="font-semibold text-primary">Family gatherings</p>
+                <p className="mt-3 text-[#5a4030]">Small cakes and cookie boxes for the people you care about.</p>
               </div>
             </div>
           </div>
-          <div className="space-y-4 rounded-[2.5rem] bg-white p-8 shadow-soft">
-            <p className="text-sm uppercase tracking-[0.35em] text-primary">Instagram preview</p>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="aspect-square overflow-hidden rounded-[2rem] bg-[#f6e7d4]" />
-              <div className="aspect-square overflow-hidden rounded-[2rem] bg-[#f6e7d4]" />
-              <div className="aspect-square overflow-hidden rounded-[2rem] bg-[#f6e7d4]" />
+          <div className="grid gap-4">
+            <div className="overflow-hidden rounded-[2.5rem] bg-white">
+              <div className="relative h-[280px] sm:h-[360px]">
+                <Image src="/products/img-05.webp" alt="Assorted baking treats" fill className="object-cover" />
+              </div>
             </div>
-            <a href="https://instagram.com/suklaamoo" target="_blank" rel="noreferrer" className="inline-flex rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#2d180f]">
-              Visit @suklaamoo
-            </a>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-[2.5rem] bg-[#fff4df]">
+                <div className="relative h-[180px]">
+                  <Image src="/products/img-02.webp" alt="Chocolate cookies" fill className="object-cover" />
+                </div>
+              </div>
+              <div className="overflow-hidden rounded-[2.5rem] bg-[#f1e7dd]">
+                <div className="relative h-[180px]">
+                  <Image src="/products/img-03.webp" alt="Chocolate brownie tray" fill className="object-cover" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-
       <Footer />
     </main>
   );
