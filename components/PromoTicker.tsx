@@ -1,25 +1,39 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
-const promos = ['Fresh baked daily', 'Order 24h ahead', 'Local pickup only'];
+const messages = [
+  'Fresh baked daily',
+  'Deliveries around Oulu starting in September',
+  'Place your order before Thursday at 18:00',
+  'Baked in Oulu in small batches',
+];
 
 export default function PromoTicker() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setIndex((current) => (current + 1) % messages.length);
+    }, 5000);
+    return () => window.clearInterval(interval);
+  }, []);
+
   return (
-    <div className="hidden md:flex items-center justify-center bg-primary px-4 py-2 text-sm font-semibold text-white">
-      <motion.div
-        animate={{ y: [0, -24, -48, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
-        className="overflow-hidden h-6"
-      >
-        <div className="space-y-2">
-          {promos.map((promo) => (
-            <p key={promo} className="h-6 leading-6 text-white">
-              {promo}
-            </p>
-          ))}
-        </div>
-      </motion.div>
+    <div className="fixed inset-x-0 top-0 z-50 flex h-12 items-center justify-center bg-primary px-4 text-sm font-semibold text-white shadow-soft">
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={messages[index]}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.4 }}
+          className="min-h-[1.5rem]"
+        >
+          {messages[index]}
+        </motion.p>
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000" role="img" aria-label="Cake placeholder image">
-  <rect width="1000" height="1000" fill="#f6e6d3"/>
-  <rect x="90" y="90" width="820" height="820" rx="70" fill="#edd4b7"/>
-  <text x="500" y="520" text-anchor="middle" font-family="Fredoka, Arial, sans-serif" font-size="62" fill="#3A2317">Cake</text>
-  <text x="500" y="620" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" fill="#5a4030">Placeholder photo</text>
-</svg>

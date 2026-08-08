@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000" role="img" aria-label="Product placeholder image">
-  <rect width="1000" height="1000" fill="#f7e4ce"/>
-  <rect x="80" y="80" width="840" height="840" rx="50" fill="#efd3b2"/>
-  <text x="500" y="520" text-anchor="middle" font-family="Fredoka, Arial, sans-serif" font-size="62" fill="#3A2317">Product</text>
-  <text x="500" y="620" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="32" fill="#5a4030">Placeholder photo</text>
-</svg>
