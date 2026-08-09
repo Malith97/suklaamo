@@ -1,10 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SectionHeading from '../components/SectionHeading';
 import CategoryPill from '../components/CategoryPill';
 import TestimonialCard from '../components/TestimonialCard';
+import ProductCard from '../components/ProductCard';
 import { products } from '../data/products';
 
 const featured = products[0];
@@ -14,14 +18,46 @@ const categories = [
   { label: 'Cakes', count: 6 },
 ];
 
+const fadeSection = {
+  hidden: { opacity: 0, y: 22 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } },
+};
+
+const staggers = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.14 } },
+};
+
+const cardReveal = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.28, ease: 'easeOut' } },
+};
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-text-dark">
       <Navbar />
 
-      <section className="container mx-auto py-16 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div className="space-y-6">
+      <motion.section
+        className="container mx-auto relative overflow-hidden py-16 lg:py-20"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        <motion.div
+          className="pointer-events-none absolute left-0 top-8 z-0 h-36 w-36 rounded-full bg-accent-gold/20 blur-3xl"
+          animate={{ y: [0, 14, 0], opacity: [0.18, 0.24, 0.18] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        <motion.div
+          className="pointer-events-none absolute right-0 top-24 z-0 h-28 w-28 rounded-full bg-accent-sage/15 blur-3xl"
+          animate={{ y: [0, -12, 0], opacity: [0.12, 0.18, 0.12] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        <div className="relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <motion.div className="space-y-6" variants={fadeSection}>
             <p className="text-sm uppercase tracking-[0.45em] text-accent-gold">Suklaamo</p>
             <h1 className="text-5xl font-black uppercase leading-tight tracking-[-0.05em] text-primary sm:text-6xl lg:text-7xl">
               Home-baked Finnish
@@ -43,39 +79,31 @@ export default function Home() {
                 <CategoryPill key={category.label} label={category.label} count={category.count} />
               ))}
             </div> */}
-          </div>
+          </motion.div>
 
           <div className="relative overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
-                <div className="absolute left-5 top-6 rounded-full bg-accent-sage/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-accent-sage shadow-soft">
-                Warm batch
-                </div>
+            <div className="absolute left-5 top-6 rounded-full bg-accent-sage/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-accent-sage shadow-soft">
+              Warm batch
+            </div>
             <div className="relative h-[420px] sm:h-[640px]">
               <Image src="/gallery/hero-2.webp" alt="Chocolate bakery product showcase" fill className="object-cover" />
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <section className="container mx-auto space-y-10 py-10 lg:py-14">
-        <SectionHeading title="This week in the kitchen" subtitle="Treats that are ready to pick up and share." />
-        <div className="grid gap-6 lg:grid-cols-3">
+        <motion.div variants={fadeSection}>
+          <SectionHeading title="This week in the kitchen" subtitle="Treats that are ready to pick up and share." />
+        </motion.div>
+
+        <motion.div className="grid gap-6 lg:grid-cols-3" variants={staggers} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
           {products.slice(0, 3).map((item) => (
-            <div key={item.id} className="overflow-hidden rounded-[3rem] bg-white p-5 shadow-soft">
-              <div className="relative h-72 overflow-hidden rounded-[2.5rem] bg-[#f2e5d4]">
-                <Image src={item.image} alt={item.name} fill className="object-cover" />
-              </div>
-              <div className="mt-5 space-y-3">
-                <p className="text-sm uppercase tracking-[0.3em] text-primary/80">{item.category}</p>
-                <h3 className="text-xl font-bold text-primary">{item.name}</h3>
-                <p className="text-sm leading-6 text-[#5a4030]">{item.description}</p>
-                <div className="flex items-center justify-between pt-4 text-sm font-semibold text-primary">
-                  <span>{item.price}</span>
-                  <span>{item.inStock ? 'In stock' : 'Made to order'}</span>
-                </div>
-              </div>
-            </div>
+            <motion.div key={item.id} variants={cardReveal} whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 260, damping: 24, duration: 0.22 }}>
+              <ProductCard product={item} href="/catalogue" />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section className="container mx-auto rounded-[3rem] bg-primary px-8 py-12 text-white shadow-soft sm:px-12 lg:px-16">

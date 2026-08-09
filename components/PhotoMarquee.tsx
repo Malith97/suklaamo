@@ -56,9 +56,14 @@ export default function PhotoMarquee() {
       >
         <motion.div className="flex items-center gap-4 px-4 py-6" animate={controls}>
           {[...images, ...images].map((src, index) => (
-            <div key={`${src}-${index}`} className="min-w-[260px] flex-shrink-0 overflow-hidden rounded-[2rem]">
+            <motion.div
+              key={`${src}-${index}`}
+              className="min-w-[260px] flex-shrink-0 overflow-hidden rounded-[2rem]"
+              whileHover={{ scale: 1.015 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+            >
               <Image src={src} alt={`Gallery image ${index + 1}`} width={280} height={420} className="h-[420px] w-full object-cover" />
-            </div>
+            </motion.div>
           ))}
         </motion.div>
       </div>

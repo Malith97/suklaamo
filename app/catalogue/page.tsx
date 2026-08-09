@@ -1,13 +1,19 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import SectionHeading from '../../components/SectionHeading';
-import ProductCard from '../../components/ProductCard';
+import CatalogueExpandableGrid from '../../components/catalogue-expandable-grid';
 import { products } from '../../data/products';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
-const tabs = ['All', 'Brownies', 'Cookies', 'Cakes', 'Pizzas'];
+const tabs = ['All', 'Cakes', 'Brownies', 'Cookies', 'Pizzas'];
+
+const fadeSection = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.42, ease: 'easeOut' } },
+};
 
 export default function CataloguePage() {
   const [activeTab, setActiveTab] = useState('All');
@@ -23,7 +29,14 @@ export default function CataloguePage() {
   return (
     <main className="min-h-screen flex flex-col bg-background text-text-dark">
       <Navbar />
-      <section className="container mx-auto flex-1 py-16">
+
+      <motion.section
+        className="container mx-auto flex-1 py-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={fadeSection}
+      >
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
             <SectionHeading title="Catalogue" subtitle="Chocolate-forward brownies, cookies and small cakes for pickup in Oulu." />
@@ -58,18 +71,15 @@ export default function CataloguePage() {
         </div>
 
         {filteredProducts.length === 0 ? (
-          <div className="mt-14 rounded-[2rem] bg-white p-10 text-center shadow-soft">
+          <motion.div className="mt-14 rounded-[2rem] bg-white p-10 text-center shadow-soft" variants={fadeSection}>
             <p className="text-lg font-semibold text-primary">Nothing matches that category yet.</p>
             <p className="mt-3 text-sm leading-7 text-text-muted">Try another category or check back soon for the next bakery release.</p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <CatalogueExpandableGrid products={filteredProducts} />
         )}
-      </section>
+      </motion.section>
+
       <Footer />
     </main>
   );

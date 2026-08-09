@@ -1,18 +1,29 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import Badge from './Badge';
 import type { Product } from '../data/products';
 
-export default function ProductCard({ product }: { product: Product }) {
-  return (
-    <Link
-      href={`/catalogue/${product.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-[2rem] bg-surface shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-elevated"
-      aria-label={`View details for ${product.name}`}
-    >
-      <div className="relative h-72 overflow-hidden bg-[#fbf4ed]">
-        <Image src={product.image} alt={product.name} fill className="object-cover transition duration-500 group-hover:scale-105" priority={false} />
-      </div>
+const cardHover = {
+  rest: { y: 0 },
+  hover: { y: -5, transition: { type: 'spring', stiffness: 260, damping: 24, duration: 0.22 } },
+};
+
+type ProductCardProps = {
+  product: Product;
+  href?: string;
+  onClick?: () => void;
+};
+
+export default function ProductCard({ product, href, onClick }: ProductCardProps) {
+  const content = (
+    <div className="group flex h-full flex-col overflow-hidden rounded-[2rem] bg-surface shadow-card transition duration-300 hover:-translate-y-0.5">
+      <motion.div className="relative h-72 overflow-hidden bg-[#fbf4ed]" variants={cardHover}>
+        <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.22, ease: 'easeOut' }} className="absolute inset-0">
+          <Image src={product.image} alt={product.name} fill className="object-cover" priority={false} />
+        </motion.div>
+      </motion.div>
+
       <div className="flex flex-1 flex-col justify-between space-y-4 p-6">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -21,7 +32,7 @@ export default function ProductCard({ product }: { product: Product }) {
             ))}
           </div>
           <h3 className="text-xl font-bold text-primary">{product.name}</h3>
-          <p className="text-sm leading-6 text-text-muted">{product.description}</p>
+          <p className="text-sm leading-6 text-text-muted line-clamp-3">{product.description}</p>
         </div>
         <div className="mt-4 flex items-center justify-between text-sm font-semibold text-primary">
           <span>{product.price}</span>
@@ -30,6 +41,26 @@ export default function ProductCard({ product }: { product: Product }) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
+
+  if (onClick) {
+    return (
+      <motion.button type="button" onClick={onClick} initial="rest" whileHover="hover" animate="rest" className="h-full w-full text-left">
+        {content}
+      </motion.button>
+    );
+  }
+
+  if (href) {
+    return (
+      <motion.div initial="rest" whileHover="hover" animate="rest" className="h-full">
+        <Link href={href} className="block h-full text-current no-underline">
+          {content}
+        </Link>
+      </motion.div>
+    );
+  }
+
+  return <motion.div initial="rest" whileHover="hover" animate="rest" className="h-full">{content}</motion.div>;
 }

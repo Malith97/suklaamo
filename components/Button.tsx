@@ -1,7 +1,14 @@
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  className?: string;
-}
+import { motion, type MotionProps } from 'framer-motion';
+import type { ComponentPropsWithoutRef } from 'react';
+
+type ButtonProps = Omit<
+  ComponentPropsWithoutRef<'button'>,
+  'onAnimationStart' | 'onAnimationEnd' | 'onAnimationCancel' | 'onAnimationIteration'
+> &
+  MotionProps & {
+    variant?: 'primary' | 'secondary' | 'ghost';
+    className?: string;
+  };
 
 export default function Button({ variant = 'primary', className = '', children, ...props }: ButtonProps) {
   const base = 'inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all';
@@ -12,8 +19,14 @@ export default function Button({ variant = 'primary', className = '', children, 
   };
 
   return (
-    <button className={`${base} ${styles[variant]} ${className}`} {...props}>
+    <motion.button
+      whileHover={{ y: -1, scale: 1.01 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+      className={`${base} ${styles[variant]} ${className}`}
+      {...props}
+    >
       {children}
-    </button>
+    </motion.button>
   );
 }
