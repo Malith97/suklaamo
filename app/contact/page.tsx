@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Instagram as InstagramRaw, Message as MessageRaw } from 'iconoir-react';
-import type { ComponentType, SVGProps } from 'react';
+import { useState, type FormEvent, type ComponentType, type SVGProps } from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -14,7 +14,46 @@ const sectionFade = {
 const Instagram = InstagramRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 const Message = MessageRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 
+type ContactFormFields = {
+  name: string;
+  email: string;
+  message: string;
+};
+
 export default function ContactPage() {
+  const [formState, setFormState] = useState<ContactFormFields>({ name: '', email: '', message: '' });
+  const [errors, setErrors] = useState<Partial<ContactFormFields>>({});
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus('submitting');
+    setErrors({});
+    setServerError(null);
+
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formState),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      if (result.errors) {
+        setErrors(result.errors);
+      } else {
+        setServerError(result.error || 'Unable to send your message. Please try again later.');
+      }
+      setStatus('error');
+      return;
+    }
+
+    setFormState({ name: '', email: '', message: '' });
+    setStatus('success');
+  }
+
   return (
     <main className="min-h-screen bg-background text-text-dark">
       <Navbar />
@@ -46,28 +85,66 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-10 rounded-[3rem] bg-white p-8 shadow-soft">
-              <form className="space-y-6">
-                <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                    Name
-                  </span>
-                  <input name="name" type="text" placeholder="Your name" className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0" />
-                </label>
-                <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                    Email
-                  </span>
-                  <input name="email" type="email" placeholder="you@example.com" className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0" />
-                </label>
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                    <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
+                      Name
+                    </span>
+                    <input
+                      name="name"
+                      type="text"
+                      value={formState.name}
+                      onChange={(event) => setFormState((current) => ({ ...current, name: event.target.value }))}
+                      required
+                      aria-invalid={Boolean(errors.name)}
+                      aria-describedby={errors.name ? 'contact-name-error' : undefined}
+                      className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
+                    />
+                    {errors.name ? <p id="contact-name-error" className="mt-2 text-xs text-red-600">{errors.name}</p> : null}
+                  </label>
+                  <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                    <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
+                      Email
+                    </span>
+                    <input
+                      name="email"
+                      type="email"
+                      value={formState.email}
+                      onChange={(event) => setFormState((current) => ({ ...current, email: event.target.value }))}
+                      required
+                      aria-invalid={Boolean(errors.email)}
+                      aria-describedby={errors.email ? 'contact-email-error' : undefined}
+                      className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
+                    />
+                    {errors.email ? <p id="contact-email-error" className="mt-2 text-xs text-red-600">{errors.email}</p> : null}
+                  </label>
+                </div>
                 <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
                   <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                     What do you want?
                   </span>
-                  <textarea name="message" rows={5} placeholder="Tell us what you need" className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"></textarea>
+                  <textarea
+                    name="message"
+                    rows={5}
+                    value={formState.message}
+                    onChange={(event) => setFormState((current) => ({ ...current, message: event.target.value }))}
+                    required
+                    aria-invalid={Boolean(errors.message)}
+                    aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                    className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
+                  />
+                  {errors.message ? <p id="contact-message-error" className="mt-2 text-xs text-red-600">{errors.message}</p> : null}
                 </label>
-                <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#d38a24] focus:outline-none focus:ring-2 focus:ring-primary/50">
+                {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}
+                {status === 'success' ? <p className="text-sm text-green-600">Your request has been sent. I will respond shortly.</p> : null}
+                <button
+                  type="submit"
+                  disabled={status === 'submitting'}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#d38a24] focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-70"
+                >
                   <Message className="h-4 w-4" aria-hidden="true" />
-                  Send request
+                  {status === 'submitting' ? 'Sending...' : 'Send request'}
                 </button>
               </form>
             </div>

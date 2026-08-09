@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import SmartImage from './SmartImage';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Badge from './Badge';
@@ -19,8 +19,8 @@ export default function ProductCard({ product, href, onClick }: ProductCardProps
   const content = (
     <div className="group flex h-full flex-col overflow-hidden rounded-[2rem] bg-surface shadow-card transition duration-300 hover:-translate-y-0.5">
       <motion.div className="relative h-72 overflow-hidden bg-[#fbf4ed]" variants={cardHover}>
-        <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.22, ease: 'easeOut' }} className="absolute inset-0">
-          <Image src={product.image} alt={product.name} fill className="object-cover" priority={false} />
+          <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.22, ease: 'easeOut' }} className="absolute inset-0">
+          <SmartImage src={product.image} alt={product.name} fill wrapperClassName="h-full w-full" imgClassName="object-cover" />
         </motion.div>
       </motion.div>
 

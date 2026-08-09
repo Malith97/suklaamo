@@ -1,6 +1,8 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
+import SmartImage from '../../components/SmartImage';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -37,6 +39,8 @@ const staggers = {
 };
 
 export default function AboutPage() {
+  const [founderLoaded, setFounderLoaded] = useState(false);
+  const [founderError, setFounderError] = useState(false);
   return (
     <main className="min-h-screen bg-background text-text-dark">
       <Navbar />

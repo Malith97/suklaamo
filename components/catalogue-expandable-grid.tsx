@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag, WebWindowClose } from 'iconoir-react';
-import Image from 'next/image';
+import SmartImage from './SmartImage';
 import { useEffect, useRef, useState, type ComponentType, type SVGProps } from 'react';
 import type { Product } from '../data/products';
 import Badge from './Badge';
@@ -123,7 +123,7 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
             >
               <div className="relative h-72 w-full overflow-hidden rounded-[2.5rem]">
                 <motion.div layoutId={`image-${product.id}`} className="absolute inset-0">
-                  <Image src={product.image} alt={product.name} fill className="object-cover" />
+                  <SmartImage src={product.image} alt={product.name} fill wrapperClassName="h-full w-full" imgClassName="object-cover" />
                 </motion.div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6">
@@ -188,11 +188,12 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
 
               <div className="relative overflow-hidden bg-[#fff5e8] lg:w-[48%] lg:min-h-[38rem]">
                 <div className="relative h-[42vh] min-h-[20rem] lg:h-full">
-                  <Image
+                  <SmartImage
                     src={selectedProduct.image}
                     alt={selectedProduct.name}
                     fill
-                    className="object-contain"
+                    wrapperClassName="h-full w-full"
+                    imgClassName="object-contain"
                     sizes="(max-width: 768px) 100vw, 80vw"
                   />
                 </div>

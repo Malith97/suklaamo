@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
+import SmartImage from './SmartImage';
 import { motion, useAnimationControls } from 'framer-motion';
 
 const images = [
@@ -62,7 +62,13 @@ export default function PhotoMarquee() {
               whileHover={{ scale: 1.015 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
             >
-              <Image src={src} alt={`Gallery image ${index + 1}`} width={280} height={420} className="h-[420px] w-full object-cover" />
+                <SmartImage
+                  src={src}
+                  alt={`Gallery image ${index + 1}`}
+                  fill
+                  wrapperClassName="h-[420px]"
+                  imgClassName="object-cover"
+                />
             </motion.div>
           ))}
         </motion.div>

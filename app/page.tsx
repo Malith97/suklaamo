@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -9,6 +8,7 @@ import SectionHeading from '../components/SectionHeading';
 import CategoryPill from '../components/CategoryPill';
 import TestimonialCard from '../components/TestimonialCard';
 import ProductCard from '../components/ProductCard';
+import SmartImage from '../components/SmartImage';
 import { products } from '../data/products';
 
 const featured = products[0];
@@ -81,13 +81,18 @@ export default function Home() {
             </div> */}
           </motion.div>
 
-          <div className="relative overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
+          <div className="overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
             <div className="absolute left-5 top-6 rounded-full bg-accent-sage/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-accent-sage shadow-soft">
               Warm batch
             </div>
-            <div className="relative h-[420px] sm:h-[640px]">
-              <Image src="/gallery/hero-2.webp" alt="Chocolate bakery product showcase" fill className="object-cover" />
-            </div>
+            <SmartImage
+              src="/gallery/hero-2.webp"
+              alt="Chocolate bakery product showcase"
+              fill
+              priority
+              wrapperClassName="h-[420px] sm:h-[640px]"
+              imgClassName="object-cover"
+            />
           </div>
         </div>
       </motion.section>
@@ -106,39 +111,101 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section className="container mx-auto rounded-[3rem] bg-primary px-8 py-12 text-white shadow-soft sm:px-12 lg:px-16">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_0.85fr] lg:items-center">
-          <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-[#f3dec9]">The Suklaamo way</p>
-            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">Simple chocolate, honest baking, warm moments</h2>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-[#f3e0c8] sm:text-lg">
-              I make each order in small batches with the kind of chocolate I love to eat myself.
-            </p>
-            <Link href="/about" className="mt-8 inline-flex rounded-full bg-accent-gold px-7 py-3 font-semibold text-white shadow-soft hover:bg-[#d38a24]">
-              Discover our story
-            </Link>
-          </div>
-          <div className="relative h-72 overflow-hidden rounded-[3rem] bg-[#f5e1cc] sm:h-80">
-            <Image src="/products/img-01.webp" alt="Baking process presentation" fill className="object-cover" />
-          </div>
-        </div>
-      </section>
+      <section className="container mx-auto py-16 lg:py-20">
+        <div className="overflow-hidden rounded-[3rem] bg-[#1e130c] p-6 shadow-soft sm:p-8 lg:p-10">
+          <div className="pointer-events-none absolute right-0 top-0 h-44 w-44 rounded-full bg-accent-gold/15 blur-3xl" />
+          <div className="pointer-events-none absolute left-0 bottom-10 h-36 w-36 rounded-full bg-accent-sage/15 blur-3xl" />
 
-      <section className="container mx-auto py-14">
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="overflow-hidden rounded-[3rem] bg-white shadow-soft">
-              <Image src="/products/img-02.webp" alt="Bakery gallery" width={1000} height={1000} className="h-72 w-full object-cover" />
-            </div>
-            <div className="overflow-hidden rounded-[3rem] bg-white shadow-soft">
-              <Image src="/products/img-03.webp" alt="Bakery gallery" width={1000} height={1000} className="h-72 w-full object-cover" />
-            </div>
-            <div className="overflow-hidden rounded-[3rem] bg-white shadow-soft sm:col-span-2">
-              <Image src="/products/img-06.webp" alt="Bakery gallery" width={1200} height={520} className="h-72 w-full object-cover" />
+          <div className="relative z-10 grid gap-10 lg:grid-cols-[1.2fr_0.95fr] lg:items-center">
+            <motion.div
+              className="group relative overflow-hidden rounded-[3rem] bg-[#2b1810] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.45)]"
+              whileHover={{ scale: 1.01 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent-cocoa/20 via-transparent to-accent-berry/10 opacity-90" />
+              <SmartImage
+              src="/products/img-03.webp"
+              alt="Death by Chocolate cake"
+              fill
+              wrapperClassName="aspect-[4/5] sm:aspect-[5/6]"
+              imgClassName="object-cover transition duration-500 group-hover:scale-105"
+            />
+              <div className="absolute left-6 top-6 rounded-full border border-accent-sage/40 bg-[#1f120c]/80 px-4 py-2 text-xs uppercase tracking-[0.35em] text-accent-sage shadow-soft">
+                Visual hero
+              </div>
+            </motion.div>
+
+            <div className="relative overflow-hidden rounded-[3rem] border border-accent-sage/20 bg-[#1f120b] p-8 shadow-soft sm:p-10">
+              <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-accent-gold/20 to-transparent opacity-50" />
+              <div className="relative z-10 space-y-8">
+                <p className="text-xs uppercase tracking-[0.35em] text-accent-gold">OUR FAVOURITES</p>
+                <h2 className="max-w-xl text-4xl font-black leading-tight tracking-[-0.03em] text-white sm:text-5xl">
+                  Baked in small batches. Made to be shared.
+                </h2>
+                <p className="max-w-xl text-base leading-8 text-[#d7c2aa] sm:text-lg">
+                  From brownies dusted with cocoa to layered cakes made for coffee moments, every bake is carefully shaped for warm tables and slow conversations in Oulu.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4 rounded-[2rem] bg-accent-berry/10 p-4">
+                    <div className="mt-1 h-3.5 w-3.5 rounded-full bg-accent-gold" />
+                    <p className="text-sm font-semibold text-[#f2e5d6]">Small batch baking</p>
+                  </div>
+                  <div className="flex items-start gap-4 rounded-[2rem] bg-accent-sage/10 p-4">
+                    <div className="mt-1 h-3.5 w-3.5 rounded-full bg-accent-sage" />
+                    <p className="text-sm font-semibold text-[#f2e5d6]">Real chocolate in every bake</p>
+                  </div>
+                  <div className="flex items-start gap-4 rounded-[2rem] bg-accent-gold/10 p-4">
+                    <div className="mt-1 h-3.5 w-3.5 rounded-full bg-accent-cocoa" />
+                    <p className="text-sm font-semibold text-[#f2e5d6]">Made fresh in Oulu</p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/catalogue"
+                  className="inline-flex rounded-full bg-accent-gold px-7 py-3 text-sm font-semibold text-[#2f1609] shadow-soft transition hover:bg-[#d59b38]"
+                >
+                  Explore Catalogue
+                </Link>
+              </div>
             </div>
           </div>
-          <div className="rounded-[3rem] bg-white p-8 shadow-soft">
-            <TestimonialCard quote="The brownies taste like a warm hug. decadent, fresh, and just perfect for a cozy evening." name="Minna, Oulu" />
+
+          <div className="mt-12 rounded-[2.5rem] bg-[#24150f]/80 p-6 sm:p-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-accent-sage">Bakery showcase</p>
+                <h3 className="mt-3 text-2xl font-black text-white sm:text-3xl">Three favourites from the kitchen</h3>
+              </div>
+              <div className="hidden h-px flex-1 bg-accent-sage/20 sm:block" />
+            </div>
+
+            <div className="mt-8 grid gap-5 sm:grid-cols-3">
+              {products.slice(1, 4).map((item) => (
+                <motion.div
+                  key={item.id}
+                  className="group overflow-hidden rounded-[2.5rem] bg-[#503126] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.55)]"
+                  whileHover={{ y: -6 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                >
+                  <div className="relative h-56 overflow-hidden">
+                    <SmartImage
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      wrapperClassName="h-full w-full"
+                      imgClassName="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#1b0f0a] via-transparent to-transparent" />
+                  </div>
+                  <div className="space-y-3 p-5">
+                    <p className="text-xs uppercase tracking-[0.35em] text-accent-berry">{item.category}</p>
+                    <h4 className="text-lg font-black text-white">{item.name}</h4>
+                    <p className="text-sm font-semibold text-accent-gold">{item.price}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -168,20 +235,32 @@ export default function Home() {
           </div>
           <div className="grid gap-4">
             <div className="overflow-hidden rounded-[2.5rem] bg-white">
-              <div className="relative h-[280px] sm:h-[360px]">
-                <Image src="/products/img-05.webp" alt="Assorted baking treats" fill className="object-cover" />
-              </div>
+              <SmartImage
+              src="/products/img-05.webp"
+              alt="Assorted baking treats"
+              fill
+              wrapperClassName="h-[280px] sm:h-[360px]"
+              imgClassName="object-cover"
+            />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="overflow-hidden rounded-[2.5rem] bg-[#fff4df]">
-                <div className="relative h-[180px]">
-                  <Image src="/products/img-02.webp" alt="Chocolate cookies" fill className="object-cover" />
-                </div>
+                <SmartImage
+                  src="/products/img-02.webp"
+                  alt="Chocolate cookies"
+                  fill
+                  wrapperClassName="h-[180px]"
+                  imgClassName="object-cover"
+                />
               </div>
               <div className="overflow-hidden rounded-[2.5rem] bg-[#f1e7dd]">
-                <div className="relative h-[180px]">
-                  <Image src="/products/img-03.webp" alt="Chocolate brownie tray" fill className="object-cover" />
-                </div>
+                <SmartImage
+                  src="/products/img-03.webp"
+                  alt="Chocolate brownie tray"
+                  fill
+                  wrapperClassName="h-[180px]"
+                  imgClassName="object-cover"
+                />
               </div>
             </div>
           </div>

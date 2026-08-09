@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import SmartImage from '../../../components/SmartImage';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
@@ -23,7 +23,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             <SectionHeading title={product.name} subtitle={product.description} />
             <div className="rounded-[2.5rem] bg-surface p-6 shadow-card">
               <div className="relative h-[420px] overflow-hidden rounded-[2rem] bg-[#f7e1cc] sm:h-[520px]">
-                <Image src={product.image} alt={product.name} fill className="object-cover" />
+                <SmartImage src={product.image} alt={product.name} fill imgClassName="object-cover" />
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import Image from 'next/image';
+import SmartImage from '../../components/SmartImage';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -58,7 +58,13 @@ export default function CartPage() {
                           return (
                             <motion.article key={item.product.id} variants={rowVariants} initial="hidden" animate="visible" exit="exit" className="grid gap-4 rounded-[2rem] border border-border p-4 sm:grid-cols-[120px_1fr]">
                               <div className="relative overflow-hidden rounded-[2rem] bg-[#f8efe0]">
-                                <Image src={item.product.image} alt={item.product.name} width={320} height={240} className="h-full w-full object-cover" />
+                                <SmartImage
+                                  src={item.product.image}
+                                  alt={item.product.name}
+                                  width={320}
+                                  height={240}
+                                  imgClassName="h-full w-full object-cover"
+                                />
                               </div>
                               <div className="flex flex-col justify-between gap-4">
                                 <div>
