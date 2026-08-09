@@ -1,14 +1,14 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ShoppingBag, WebWindowClose } from 'iconoir-react';
+import { ShoppingBag, Xmark } from 'iconoir-react';
 import SmartImage from './SmartImage';
 import { useEffect, useRef, useState, type ComponentType, type SVGProps } from 'react';
 import type { Product } from '../data/products';
 import Badge from './Badge';
 import { useCart } from '../context/CartContext';
 
-const CloseIcon = WebWindowClose as unknown as ComponentType<SVGProps<SVGSVGElement>>;
+const CloseIcon = Xmark as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 const ShoppingBagIcon = ShoppingBag as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 
 const cardTransition = { type: 'spring', stiffness: 220, damping: 28, mass: 0.8 };

@@ -7,8 +7,17 @@ import Badge from '../../../components/Badge';
 import SectionHeading from '../../../components/SectionHeading';
 import { products } from '../../../data/products';
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const product = products.find((item) => item.slug === params.slug);
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function ProductDetailPage({ params }: PageProps) {
+
+  const { slug } = await params;
+
+  const product = products.find((item) => item.slug === slug);
 
   if (!product) {
     notFound();
