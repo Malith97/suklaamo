@@ -84,7 +84,7 @@ const policyContent: Record<PolicyKey, { title: string; sections: Array<{ headin
       },
       {
         heading: '4. Cross-Contact Notice',
-        body: 'Because Suklaamo operates from a home kitchen using shared equipment, we cannot guarantee the complete absence of allergen cross-contact between products, even with careful preparation and cleaning. If you or your guests have a severe allergy, including risk of anaphylaxis, contact us directly before ordering. In some cases, we may recommend that you do not order from us.',
+        body: 'Because Suklaamo operates from a home kitchen using shared equipment, we cannot guarantee the complete absence of allergen cross-contact between products, even with careful preparation and cleaning. If you or your guests have a severe allergy, including risk of anaphylaxis, contact us directly before ordering.',
       },
       {
         heading: '5. Customer Responsibility',
