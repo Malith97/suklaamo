@@ -10,6 +10,14 @@ export type OrderFormValues = {
   email: string;
   pickupDate: string;
   notes: string;
+  items: OrderLineItem[];
+};
+
+export type OrderLineItem = {
+  id: string;
+  name: string;
+  price: string;
+  quantity: number;
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,6 +26,33 @@ const FINNISH_PHONE_INTL_REGEX = /^\+358[45]\d{8}$/;
 
 export function sanitizeInput(value: string) {
   return value.trim().replace(/<[^>]*>/g, '');
+}
+
+function sanitizeUnknownString(value: unknown) {
+  return typeof value === 'string' ? sanitizeInput(value) : '';
+}
+
+function parseQuantity(value: unknown) {
+  if (typeof value === 'number' && Number.isFinite(value)) return Math.trunc(value);
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return Math.trunc(parsed);
+  }
+  return 0;
+}
+
+function sanitizeOrderItems(items: unknown): OrderLineItem[] {
+  if (!Array.isArray(items)) return [];
+
+  return items.map((item) => {
+    const candidate = (item ?? {}) as Record<string, unknown>;
+    return {
+      id: sanitizeUnknownString(candidate.id),
+      name: sanitizeUnknownString(candidate.name),
+      price: sanitizeUnknownString(candidate.price),
+      quantity: parseQuantity(candidate.quantity),
+    };
+  });
 }
 
 function normalizePhone(phone: string) {
@@ -60,11 +95,13 @@ export function validateContactForm(values: ContactFormValues) {
 }
 
 export function validateOrderForm(values: OrderFormValues) {
-  const name = sanitizeInput(values.name);
-  const phone = sanitizeInput(values.phone);
-  const email = sanitizeInput(values.email);
-  const pickupDate = sanitizeInput(values.pickupDate);
-  const notes = sanitizeInput(values.notes);
+  const candidate = values as unknown as Record<string, unknown>;
+  const name = sanitizeUnknownString(candidate.name);
+  const phone = sanitizeUnknownString(candidate.phone);
+  const email = sanitizeUnknownString(candidate.email);
+  const pickupDate = sanitizeUnknownString(candidate.pickupDate);
+  const notes = sanitizeUnknownString(candidate.notes);
+  const items = sanitizeOrderItems(candidate.items);
   const errors: Record<string, string> = {};
 
   if (!name) errors.name = 'Name is required.';
@@ -74,6 +111,11 @@ export function validateOrderForm(values: OrderFormValues) {
   else if (!validateEmail(email)) errors.email = 'Please enter a valid email address.';
   if (!pickupDate) errors.pickupDate = 'Pickup date is required.';
   else if (!validatePickupDate(pickupDate)) errors.pickupDate = 'Pickup date must be in the future.';
+  if (!items.length) {
+    errors.items = 'At least one product is required.';
+  } else if (items.some((item) => !item.name || !item.price || item.quantity < 1)) {
+    errors.items = 'Order contains invalid product information.';
+  }
 
-  return { values: { name, phone, email, pickupDate, notes }, errors };
+  return { values: { name, phone, email, pickupDate, notes, items }, errors };
 }

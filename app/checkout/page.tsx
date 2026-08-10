@@ -42,6 +42,7 @@ export default function CheckoutPage() {
   const [pickupDate, setPickupDate] = useState('');
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<CheckoutField, boolean>>({
     name: false,
@@ -132,7 +133,19 @@ export default function CheckoutPage() {
     const response = await fetch('/api/order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, email, pickupDate, notes }),
+      body: JSON.stringify({
+        name,
+        phone,
+        email,
+        pickupDate,
+        notes,
+        items: items.map((item) => ({
+          id: item.product.id,
+          name: item.product.name,
+          price: item.product.price,
+          quantity: item.quantity,
+        })),
+      }),
     });
 
     const result = await response.json();
@@ -147,6 +160,7 @@ export default function CheckoutPage() {
       return;
     }
 
+    setOrderNumber(typeof result.orderNumber === 'string' ? result.orderNumber : null);
     clearCart();
     setSubmitted(true);
     setStatus('success');
@@ -160,8 +174,14 @@ export default function CheckoutPage() {
           <div className="rounded-[3rem] bg-white p-10 text-center shadow-soft">
             <p className="text-sm uppercase tracking-[0.35em] text-primary">Order placed</p>
             <h1 className="mt-4 text-4xl font-black text-text-dark">Thank you</h1>
+            {orderNumber ? (
+              <div className="mt-6 rounded-[1.5rem] border border-border bg-[#fbf7f0] p-5">
+                <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Order Number</p>
+                <p className="mt-2 text-2xl font-black text-primary">{orderNumber}</p>
+              </div>
+            ) : null}
             <p className="mt-4 text-sm leading-7 text-text-muted">
-              Your order request has been received. I will confirm the pickup window by phone or email shortly.
+              Your order request has been received. A confirmation email has been sent to {email}. Keep your order number for reference. We will contact you shortly to confirm availability and pickup details.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Link href="/catalogue" className="inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#d38a24]">
