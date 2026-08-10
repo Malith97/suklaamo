@@ -1,9 +1,4 @@
-'use client';
-
 import Image from 'next/image';
-import { useState } from 'react';
-import SmartImage from '../../components/SmartImage';
-import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SectionHeading from '../../components/SectionHeading';
@@ -28,44 +23,26 @@ const kitchenValues = [
   },
 ];
 
-const sectionVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.42, ease: 'easeOut' } },
-};
-
-const staggers = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
-};
-
 export default function AboutPage() {
-  const [founderLoaded, setFounderLoaded] = useState(false);
-  const [founderError, setFounderError] = useState(false);
   return (
     <main className="min-h-screen bg-background text-text-dark">
       <Navbar />
 
-      <motion.section
-        className="container mx-auto py-16 space-y-14 lg:space-y-20"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={staggers}
-      >
-        <motion.div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center" variants={sectionVariant}>
-          <motion.div
-            className="overflow-hidden rounded-[3rem] bg-[#f7e0cd] p-8 shadow-soft sm:p-10 lg:max-w-[600px] lg:mx-auto"
-            whileHover={{ y: -3 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-          >
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              className="h-[500px] w-full rounded-[2.5rem] sm:h-[600px] lg:h-[700px] overflow-hidden"
-            >
-              <Image src="/founder/founder.png" alt="Founder of Suklaamo" width={1200} height={1000} className="h-full w-full object-cover" />
-            </motion.div>
-          </motion.div>
+      <section className="container mx-auto py-16 space-y-14 lg:space-y-20">
+        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div className="overflow-hidden rounded-[3rem] bg-[#f7e0cd] p-8 shadow-soft transition-transform duration-300 hover:-translate-y-0.5 sm:p-10 lg:mx-auto lg:max-w-[600px]">
+            <div className="h-[500px] w-full overflow-hidden rounded-[2.5rem] sm:h-[600px] lg:h-[700px]">
+              <Image
+                src="/founder/founder.png"
+                alt="Founder of Suklaamo"
+                width={1200}
+                height={1000}
+                priority
+                sizes="(max-width: 1024px) 100vw, 600px"
+                className="h-full w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+              />
+            </div>
+          </div>
 
           <div className="space-y-6">
             <p className="text-sm uppercase tracking-[0.35em] text-accent-cocoa">Meet the baker</p>
@@ -86,9 +63,9 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div className="rounded-[3rem] bg-[#fff4df] p-10 shadow-soft" variants={sectionVariant}>
+        <div className="rounded-[3rem] bg-[#fff4df] p-10 shadow-soft">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
               <SectionHeading title="A story from the kitchen" subtitle="How Suklaamo found its rhythm." />
@@ -99,7 +76,7 @@ export default function AboutPage() {
                 It is a slow kitchen. I write notes for every order, keep the oven temperature steady and package each box so it arrives looking calm and familiar.
               </p>
             </div>
-            <motion.div className="space-y-4 rounded-[2.5rem] bg-white p-8 shadow-soft" whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 260, damping: 24, duration: 0.22 }}>
+            <div className="space-y-4 rounded-[2.5rem] bg-white p-8 shadow-soft transition-transform duration-300 hover:-translate-y-0.5">
               <div className="flex items-start gap-4">
                 <span className="mt-1 inline-flex h-3 w-3 rounded-full bg-accent-berry" />
                 <div>
@@ -121,16 +98,16 @@ export default function AboutPage() {
                   <p className="mt-2 text-sm leading-7 text-[#5a4030]">Small cakes, cookie boxes and brownies are made for birthdays, coffee breaks and everyday treats.</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.section variants={staggers}>
-          <motion.div variants={sectionVariant}>
+        <section>
+          <div>
             <SectionHeading title="A founder's note" subtitle="A simple view of how I bake." />
-          </motion.div>
+          </div>
 
-          <motion.div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start" variants={sectionVariant}>
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div className="rounded-[3rem] bg-white p-10 shadow-soft">
               <p className="text-base leading-7 text-[#5a4030]">
                 I bake in the evenings and on slow mornings. The kitchen is where I test new cookie ideas, finish a batch of brownies and wrap orders with a little note. It is all very small, but I want every box to feel like a warm gift.
@@ -139,14 +116,14 @@ export default function AboutPage() {
                 The best part is hearing that the treats made someone’s coffee better or a family gathering sweeter. That is what keeps this little bakery going.
               </p>
             </div>
-            <motion.div className="rounded-[3rem] bg-[#f4e2d0] p-10 shadow-soft" whileHover={{ y: -2 }} transition={{ duration: 0.35, ease: 'easeOut' }}>
+            <div className="rounded-[3rem] bg-[#f4e2d0] p-10 shadow-soft transition-transform duration-300 hover:-translate-y-0.5">
               <p className="text-sm uppercase tracking-[0.35em] text-accent-cocoa">Founder quote</p>
               <p className="mt-6 text-3xl font-black leading-tight text-primary sm:text-4xl">
                 “I bake for the quiet mornings, the small celebrations and the people who choose a treat made with care.”
               </p>
-            </motion.div>
-          </motion.div>
-        </motion.section>
+            </div>
+          </div>
+        </section>
 
         <section>
           <SectionHeading title="What matters in our kitchen" subtitle="The simple things I never compromise on." />
@@ -166,7 +143,7 @@ export default function AboutPage() {
             <PhotoMarquee />
           </div>
         </section>
-      </motion.section>
+      </section>
 
       <Footer />
     </main>

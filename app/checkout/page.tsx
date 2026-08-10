@@ -130,31 +130,39 @@ export default function CheckoutPage() {
     setStatus('submitting');
     setServerError(null);
 
-    const response = await fetch('/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        phone,
-        email,
-        pickupDate,
-        notes,
-        items: items.map((item) => ({
-          id: item.product.id,
-          name: item.product.name,
-          price: item.product.price,
-          quantity: item.quantity,
-        })),
-      }),
-    });
+    let response: Response;
+    let result: Record<string, unknown>;
 
-    const result = await response.json();
+    try {
+      response = await fetch('/api/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          pickupDate,
+          notes,
+          items: items.map((item) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+      result = await response.json();
+    } catch {
+      setServerError('Unable to submit your order request. Please check your connection and try again.');
+      setStatus('error');
+      return;
+    }
 
     if (!response.ok) {
-      if (result.errors) {
-        setErrors(result.errors);
+      if (result.errors && typeof result.errors === 'object' && result.errors !== null) {
+        setErrors(result.errors as Record<string, string>);
       } else {
-        setServerError(result.error || 'Unable to submit your order request. Please try again later.');
+        setServerError(typeof result.error === 'string' ? result.error : 'Unable to submit your order request. Please try again later.');
       }
       setStatus('error');
       return;

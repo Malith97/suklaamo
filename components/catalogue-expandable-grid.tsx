@@ -135,8 +135,8 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6">
                   <div className="flex flex-col gap-3">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="max-w-[70%] break-words text-2xl font-black uppercase tracking-[-0.03em] text-white sm:text-3xl">
+                    <div className="flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                      <h3 className="w-full break-words text-[1.7rem] font-black uppercase leading-[0.95] tracking-[-0.03em] text-white sm:max-w-[70%] sm:text-3xl">
                         {product.name}
                       </h3>
                       <span className="rounded-full bg-[#3a2414] px-4 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-soft">

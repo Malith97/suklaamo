@@ -403,20 +403,28 @@ export function buildCustomerConfirmationEmailHtml(payload: OrderEmailPayload) {
 }
 
 export async function sendResendEmail({ apiKey, from, to, subject, text, html }: ResendEmailParams) {
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from,
-      to,
-      subject,
-      text,
-      ...(html ? { html } : {}),
-    }),
-  });
+  let response: Response;
+  try {
+    response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        subject,
+        text,
+        ...(html ? { html } : {}),
+      }),
+    });
+  } catch (err) {
+    return {
+      ok: false as const,
+      error: err instanceof Error ? err.message : 'Network error reaching email service.',
+    };
+  }
 
   const data = await response.json().catch(() => null) as
     | { id?: string; message?: string; error?: { message?: string } }

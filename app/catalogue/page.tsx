@@ -33,8 +33,9 @@ export default function CataloguePage() {
       <motion.section
         className="container mx-auto flex-1 py-16"
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        // whileInView="visible"
+        animate="visible"
+        // viewport={{ once: true, amount: 0.2 }}
         variants={fadeSection}
       >
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">

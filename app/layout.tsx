@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { Fredoka, Inter } from 'next/font/google';
 import Analytics from '../components/Analytics';
 import PromoTicker from '../components/PromoTicker';
-import PageTransition from '../components/PageTransition';
 
 const fredoka = Fredoka({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-fredoka' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -92,7 +91,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body suppressHydrationWarning className="pt-12 bg-background text-text-dark">
         <Analytics />
         <PromoTicker />
-        <PageTransition>{children}</PageTransition>
+        {children}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessStructuredData) }}
