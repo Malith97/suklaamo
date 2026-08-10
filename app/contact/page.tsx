@@ -63,7 +63,7 @@ export default function ContactPage() {
             <p className="text-sm uppercase tracking-[0.35em] text-primary">Get in touch</p>
             <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">Reserve your handcrafted chocolate treats for pickup in Oulu.</h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-[#5a4030] sm:text-base">
-              Send your request through the form, Instagram, Whatsapp or email. We’ll reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.
+              Send your request through the form, Instagram, Whatsapp or email. We will reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.
             </p>
 
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
@@ -78,7 +78,7 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-10 rounded-[2rem] bg-[#fff8e8] p-8 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Custom Orders & Enquiries</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Custom Orders and Enquiries</p>
               <p className="mt-2 text-sm leading-7 text-[#5a4030]">
                 Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We'll get back to you as soon as possible to discuss your requirements and available pickup dates.
               </p>
