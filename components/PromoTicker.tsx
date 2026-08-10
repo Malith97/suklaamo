@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 const messages = [
-  'Fresh baked daily',
+  'Baked fresh for weekend pickup',
   'Deliveries around Oulu starting in September',
   'Place your order before Thursday at 18:00',
   'Baked in Oulu in small batches',

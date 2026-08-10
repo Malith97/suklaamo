@@ -21,6 +21,7 @@ export default function CartPage() {
   const { items, itemCount, removeItem, updateQuantity, clearCart } = useCart();
 
   const subtotal = items.reduce((sum, item) => sum + parsePrice(item.product.price) * item.quantity, 0);
+  const continueShoppingHref = '/catalogue';
 
   return (
     <main className="min-h-screen flex flex-col bg-background text-text-dark">
@@ -73,11 +74,11 @@ export default function CartPage() {
                                 </div>
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                   <div className="flex items-center gap-3">
-                                    <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-xl text-primary transition hover:bg-[#f4e0c3]">
+                                        <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-xl text-primary transition hover:bg-[#f4e0c3]">
                                       −
                                     </button>
                                     <span className="min-w-[2rem] text-center text-sm font-semibold">{item.quantity}</span>
-                                    <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-xl text-primary transition hover:bg-[#f4e0c3]">
+                                        <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-xl text-primary transition hover:bg-[#f4e0c3]">
                                       +
                                     </button>
                                   </div>
@@ -141,13 +142,20 @@ export default function CartPage() {
               <p className="text-sm uppercase tracking-[0.35em] text-primary">Pickup details</p>
               <p className="mt-4 text-sm leading-7 text-text-muted">Pickup orders are prepared for local collection from Oulu. We will confirm your exact pickup time on checkout.</p>
             </div>
+            <div className="rounded-[2rem] bg-white p-6 shadow-soft">
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">Weekend ordering</p>
+              <p className="mt-4 text-sm leading-7 text-text-muted">Reserve your order before Thursday 18:00.</p>
+            </div>
             <div className="flex flex-wrap items-center gap-3">
-                  <Button variant="secondary" type="button" onClick={clearCart} className="rounded-full px-5 py-3">
-                    Clear Cart
-                  </Button>
-                  <Link href="/checkout" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#4e2b15]">
-                    Continue to Checkout
-                  </Link>
+              <Link href={continueShoppingHref} className="inline-flex rounded-full border border-[#d9c8b1] bg-white px-5 py-3 text-sm font-semibold text-primary shadow-soft hover:bg-[#fff5df]">
+                Continue Shopping
+              </Link>
+              <Button variant="secondary" type="button" onClick={clearCart} className="rounded-full px-5 py-3">
+                Clear Cart
+              </Button>
+              <Link href="/checkout" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#4e2b15]">
+                Continue to Checkout
+              </Link>
               </div>
           </aside>
         </div>

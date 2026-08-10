@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import Button from './Button';
 import type { Product } from '../data/products';
-import ProductCard from './ProductCard';
 import { MAX_CART_QUANTITY, MAX_CART_QUANTITY_MESSAGE, useCart } from '../context/CartContext';
 
 type ToastState = {
@@ -11,7 +11,12 @@ type ToastState = {
   message: string;
 };
 
-export default function CatalogueExpandableGrid({ products }: { products: Product[] }) {
+type ProductPurchaseActionsProps = {
+  product: Product;
+  className?: string;
+};
+
+export default function ProductPurchaseActions({ product, className = '' }: ProductPurchaseActionsProps) {
   const { addItem, itemCount } = useCart();
   const [toast, setToast] = useState<ToastState | null>(null);
   const timeoutRef = useRef<number | null>(null);
@@ -24,7 +29,14 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
     };
   }, []);
 
-  const clearToast = () => {
+  const handleAddToCart = () => {
+    const result = addItem(product);
+    setToast(
+      result.success
+        ? { kind: 'success', message: `${product.name} added to cart.` }
+        : { kind: 'error', message: result.message },
+    );
+
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
     }
@@ -35,31 +47,15 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
     }, 2200);
   };
 
-  const handleAddToCart = (product: Product) => {
-    const result = addItem(product);
-    setToast(
-      result.success
-        ? { kind: 'success', message: `${product.name} added to cart.` }
-        : { kind: 'error', message: result.message },
-    );
-    clearToast();
-  };
-
-  const addToCartDisabled = itemCount >= MAX_CART_QUANTITY;
+  const isLimitReached = itemCount >= MAX_CART_QUANTITY;
 
   return (
-    <>
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            href={`/catalogue/${product.slug}`}
-            onAddToCart={() => handleAddToCart(product)}
-            addToCartDisabled={addToCartDisabled}
-            addToCartDisabledLabel={MAX_CART_QUANTITY_MESSAGE}
-          />
-        ))}
+    <div className={className}>
+      <div className="space-y-3">
+        <Button type="button" onClick={handleAddToCart} className="w-full" disabled={isLimitReached}>
+          {isLimitReached ? 'Order limit reached' : 'Add to cart'}
+        </Button>
+        {isLimitReached ? <p className="text-xs leading-6 text-[#8d3b28]">{MAX_CART_QUANTITY_MESSAGE}</p> : null}
       </div>
 
       <AnimatePresence>
@@ -75,6 +71,6 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

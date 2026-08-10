@@ -47,7 +47,7 @@ export default function AboutPage() {
           <div className="space-y-6">
             <p className="text-sm uppercase tracking-[0.35em] text-accent-cocoa">Meet the baker</p>
             <h1 className="text-4xl font-black leading-tight text-primary sm:text-5xl">
-              A hobby baker who loves chocolate, coffee and the people who share the treats.
+              A home baker who loves chocolate, coffee and the people who share the treats.
             </h1>
             <p className="max-w-3xl text-base leading-8 text-[#5a4030] sm:text-lg">
               I started baking because I wanted one more sweet thing after a long day. It turned into a habit: good chocolate, a quiet kitchen and the joy of making something for someone else.

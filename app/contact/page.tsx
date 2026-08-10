@@ -78,9 +78,9 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-10 rounded-[2rem] bg-[#fff8e8] p-8 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order note</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Custom Orders & Enquiries</p>
               <p className="mt-2 text-sm leading-7 text-[#5a4030]">
-                Checkout is not available yet. Use the form below or DM us on Instagram/Whatsapp and we’ll confirm your order with a pickup window that works for you.
+                Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We'll get back to you as soon as possible to discuss your requirements and available pickup dates.
               </p>
             </div>
 
@@ -120,24 +120,36 @@ export default function ContactPage() {
                     {errors.email ? <p id="contact-email-error" className="mt-2 text-xs text-red-600">{errors.email}</p> : null}
                   </label>
                 </div>
-                <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-3 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="pointer-events-none absolute left-4 top-3 z-10 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
+
+                {/*
+                  FIX: previously the "WHAT DO YOU WANT?" caption was absolutely
+                  positioned on top of the textarea (like the floating labels
+                  above), with only pt-6 pushing the textarea down to clear it.
+                  That gap wasn't tall enough to fully clear the caption's own
+                  line height + letter tracking, so the first line of typed
+                  text rendered partly underneath the label and got clipped by
+                  overflow-hidden on the wrapper.
+                  Fix: the caption is now a normal, non-overlapping block above
+                  the textarea (like a standard label), and overflow-hidden is
+                  removed since there's nothing left to clip.
+                */}
+                <label className="group relative block rounded-[1rem] border border-border bg-[#fbf7f0] text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <span className="block px-4 pt-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                     What do you want?
                   </span>
-                  <div className="pt-6">
-                    <textarea
-                      name="message"
-                      rows={5}
-                      value={formState.message}
-                      onChange={(event) => setFormState((current) => ({ ...current, message: event.target.value }))}
-                      required
-                      aria-invalid={Boolean(errors.message)}
-                      aria-describedby={errors.message ? 'contact-message-error' : undefined}
-                      className="block w-full min-h-[7.5rem] border-0 bg-transparent p-0 text-sm leading-6 outline-none focus:ring-0"
-                    />
-                  </div>
-                  {errors.message ? <p id="contact-message-error" className="mt-2 text-xs text-red-600">{errors.message}</p> : null}
+                  <textarea
+                    name="message"
+                    rows={5}
+                    value={formState.message}
+                    onChange={(event) => setFormState((current) => ({ ...current, message: event.target.value }))}
+                    required
+                    aria-invalid={Boolean(errors.message)}
+                    aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                    className="block w-full min-h-[7.5rem] resize-y border-0 bg-transparent px-4 pb-3 text-sm leading-6 outline-none focus:ring-0"
+                  />
+                  {errors.message ? <p id="contact-message-error" className="mx-4 mb-3 text-xs text-red-600">{errors.message}</p> : null}
                 </label>
+
                 {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}
                 {status === 'success' ? <p className="text-sm text-green-600">Your request has been sent. I will respond shortly.</p> : null}
                 <button

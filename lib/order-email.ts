@@ -10,6 +10,8 @@ type OrderEmailPayload = {
   items: OrderLineItem[];
   orderTotal: string;
   submittedAt: string;
+  policyAccepted: boolean;
+  policyAcceptedAt: string;
 };
 
 type ResendEmailParams = {
@@ -172,6 +174,12 @@ export function buildOrderEmailText(payload: OrderEmailPayload) {
     'Customer Notes:',
     payload.notes || 'No notes provided.',
     '',
+    'Policy Acceptance:',
+    payload.policyAccepted ? '✅ Accepted' : 'Not accepted',
+    '',
+    'Accepted At:',
+    payload.policyAcceptedAt,
+    '',
     'Submitted:',
     payload.submittedAt,
     '',
@@ -212,6 +220,16 @@ export function buildCustomerConfirmationEmailText(payload: OrderEmailPayload) {
     '',
     'Customer Notes:',
     payload.notes || 'No notes provided.',
+    '',
+    'POLICY CONFIRMATION',
+    '',
+    'You confirmed that you have read and accepted:',
+    '• Privacy Policy',
+    '• Allergen Information Policy',
+    '• Cancellation & Refund Policy',
+    '',
+    'Accepted At:',
+    payload.policyAcceptedAt,
     '',
     'PAYMENT INFORMATION',
     '',
@@ -357,6 +375,12 @@ export function buildCustomerConfirmationEmailHtml(payload: OrderEmailPayload) {
                       <tr><td style="padding:0 0 12px 0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;">4. Once payment is confirmed, your order is prepared.</td></tr>
                       <tr><td style="padding:0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;">5. Your order is ready for pickup.</td></tr>
                     </table>
+                  `)}
+
+                  ${infoCard('Policy Confirmation', `
+                    <p style="margin:0 0 12px 0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;">You confirmed that you have read and accepted:</p>
+                    <p style="margin:0 0 12px 0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;">&#8226; Privacy Policy<br />&#8226; Allergen Information Policy<br />&#8226; Cancellation &amp; Refund Policy</p>
+                    <p style="margin:0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;"><strong>Accepted At:</strong> ${escapeHtml(payload.policyAcceptedAt)}</p>
                   `)}
 
                   ${infoCard('Payment Information', `

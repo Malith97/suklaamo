@@ -11,6 +11,7 @@ export type OrderFormValues = {
   pickupDate: string;
   notes: string;
   items: OrderLineItem[];
+  policyAccepted: boolean;
 };
 
 export type OrderLineItem = {
@@ -39,6 +40,16 @@ function parseQuantity(value: unknown) {
     if (Number.isFinite(parsed)) return Math.trunc(parsed);
   }
   return 0;
+}
+
+function parseBoolean(value: unknown) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'true') return true;
+    if (normalized === 'false') return false;
+  }
+  return false;
 }
 
 function sanitizeOrderItems(items: unknown): OrderLineItem[] {
@@ -102,6 +113,7 @@ export function validateOrderForm(values: OrderFormValues) {
   const pickupDate = sanitizeUnknownString(candidate.pickupDate);
   const notes = sanitizeUnknownString(candidate.notes);
   const items = sanitizeOrderItems(candidate.items);
+  const policyAccepted = parseBoolean(candidate.policyAccepted);
   const errors: Record<string, string> = {};
 
   if (!name) errors.name = 'Name is required.';
@@ -116,6 +128,9 @@ export function validateOrderForm(values: OrderFormValues) {
   } else if (items.some((item) => !item.name || !item.price || item.quantity < 1)) {
     errors.items = 'Order contains invalid product information.';
   }
+  if (!policyAccepted) {
+    errors.policyAccepted = 'Policy acceptance is required before placing an order.';
+  }
 
-  return { values: { name, phone, email, pickupDate, notes, items }, errors };
+  return { values: { name, phone, email, pickupDate, notes, items, policyAccepted }, errors };
 }

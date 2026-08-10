@@ -69,6 +69,7 @@ export async function POST(request: Request) {
     .join('|');
   const orderNumber = generateOrderNumber(now, entropySource);
   const submittedAt = formatSubmissionTimestamp(now);
+  const policyAcceptedAt = submittedAt;
   const orderTotal = formatEuro(calculateOrderTotalCents(values.items));
   const subject = `🍫 New Suklaamo Order - ${orderNumber}`;
   const text = buildOrderEmailText({
@@ -81,6 +82,8 @@ export async function POST(request: Request) {
     items: values.items,
     orderTotal,
     submittedAt,
+    policyAccepted: values.policyAccepted,
+    policyAcceptedAt,
   });
 
   const recipientResults = await Promise.all(
@@ -140,6 +143,8 @@ export async function POST(request: Request) {
     items: values.items,
     orderTotal,
     submittedAt,
+    policyAccepted: values.policyAccepted,
+    policyAcceptedAt,
   });
   const customerHtml = buildCustomerConfirmationEmailHtml({
     orderNumber,
@@ -151,6 +156,8 @@ export async function POST(request: Request) {
     items: values.items,
     orderTotal,
     submittedAt,
+    policyAccepted: values.policyAccepted,
+    policyAcceptedAt,
   });
 
   const customerEmailResult = await sendResendEmail({

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, type FormEvent, type ComponentType, type SVGProps } from 'react';
+import { useEffect, useState, type FormEvent, type ComponentType, type SVGProps } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag as ShoppingBagRaw } from 'iconoir-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -21,6 +21,119 @@ const parsePrice = (price: string) => Number(price.replace(/[^\d]/g, ''));
 const formatPrice = (value: number) => `€${value}`;
 
 type CheckoutField = 'name' | 'phone' | 'email' | 'pickupDate';
+type PolicyKey = 'privacy' | 'allergen' | 'cancellation';
+
+const policyTabs: Array<{ key: PolicyKey; label: string }> = [
+  { key: 'privacy', label: 'Privacy Policy' },
+  { key: 'allergen', label: 'Allergen Information Policy' },
+  { key: 'cancellation', label: 'Cancellation & Refund Policy' },
+];
+
+const policyContent: Record<PolicyKey, { title: string; sections: Array<{ heading: string; body: string }> }> = {
+  privacy: {
+    title: 'Privacy Policy',
+    sections: [
+      {
+        heading: '1. Who We Are (Data Controller)',
+        body: 'Suklaamo is a home bakery based in Oulu, Finland, operated by [Your full legal name], [Business ID / Y-tunnus if registered, or operating as a private individual if not yet registered]. Contact: Email [insert], Address Peltolankaari 20, 90230 Oulu, Finland.',
+      },
+      {
+        heading: '2. What Personal Data We Collect',
+        body: 'When you place an order request or contact us, we collect: name, phone number, email address, pickup date, order details (items, quantities, prices), payment status, and any notes or dietary/allergen information you choose to share. We do not knowingly collect data beyond what is needed to process and fulfil your order.',
+      },
+      {
+        heading: '3. Why We Process Your Data and Legal Basis',
+        body: 'Order review, confirmation, pickup coordination, payment instructions, and payment processing are handled under GDPR Article 6(1)(b) (performance of a contract). Accounting records are handled under Article 6(1)(c) (legal obligation under the Finnish Accounting Act). Allergen and dietary responses you request are handled under Article 6(1)(b). Fraud or abuse prevention is handled under Article 6(1)(f) (legitimate interest).',
+      },
+      {
+        heading: '4. Who Sees Your Data',
+        body: 'We do not sell, rent, or trade your personal data. Data may be visible to Suklaamo owner(s), service providers used to run the business (order-management and email providers), and Finnish tax authorities when required by law. If a provider stores data outside the EU/EEA, an appropriate GDPR safeguard such as Standard Contractual Clauses is used.',
+      },
+      {
+        heading: '5. How Long We Keep Your Data',
+        body: 'Order and payment records are kept for 6 years from the end of the relevant accounting year (Finnish Accounting Act, Kirjanpitolaki 2 luku 10 §). Contact details and notes not required for accounting (for example enquiries that do not become orders) are kept up to 12 months, then deleted. Marketing communication data (if opted in) is kept until unsubscribe or objection.',
+      },
+      {
+        heading: '6. Your Rights',
+        body: 'Under GDPR, you have rights to access, correct, request deletion where retention is not legally required, restrict or object to certain processing, data portability where applicable, and to lodge a complaint with the Finnish Data Protection Ombudsman: https://tietosuoja.fi. Contact us and we will respond within one month.',
+      },
+      {
+        heading: '7. Accuracy of Information You Provide',
+        body: 'Please provide accurate contact details. If we cannot reach you to confirm your order, we may be unable to proceed.',
+      },
+      {
+        heading: '8. Cookies and Website Data',
+        body: 'If analytics, cookies, or embedded content are used, they should be disclosed clearly before publishing. If none are used beyond technically necessary operation, this should be stated explicitly.',
+      },
+    ],
+  },
+  allergen: {
+    title: 'Allergen Information Policy',
+    sections: [
+      {
+        heading: '1. Kitchen Environment',
+        body: 'Suklaamo products are handmade in a home bakery (kotivalmistus) in Oulu. This is not a certified allergen-free facility, and multiple products are prepared using shared equipment, surfaces, and utensils.',
+      },
+      {
+        heading: '2. The 14 Legally Recognised Allergens',
+        body: 'Under EU Regulation 1169/2011, the following must be disclosed when used as ingredients: cereals containing gluten, crustaceans, eggs, fish, peanuts, soybeans, milk (including lactose), tree nuts, celery, mustard, sesame seeds, sulphur dioxide and sulphites above legal thresholds, lupin, and molluscs. Full ingredient information for specific products is available on request before ordering.',
+      },
+      {
+        heading: '3. Before You Order',
+        body: 'If you or anyone you order for has a food allergy, intolerance, or dietary restriction, contact us before placing your order. We will share the full ingredient list for the specific product(s) you are considering.',
+      },
+      {
+        heading: '4. Cross-Contact Notice',
+        body: 'Because Suklaamo operates from a home kitchen using shared equipment, we cannot guarantee the complete absence of allergen cross-contact between products, even with careful preparation and cleaning. If you or your guests have a severe allergy, including risk of anaphylaxis, contact us directly before ordering. In some cases, we may recommend that you do not order from us.',
+      },
+      {
+        heading: '5. Customer Responsibility',
+        body: 'By placing an order, you confirm that you have reviewed this allergen policy, asked any necessary questions before ordering, and take responsibility for assessing whether our products are suitable for you or your guests to consume.',
+      },
+    ],
+  },
+  cancellation: {
+    title: 'Cancellation & Refund Policy',
+    sections: [
+      {
+        heading: '1. A Note on Your Legal Rights',
+        body: 'Under the Finnish Consumer Protection Act (Kuluttajansuojalaki, Chapter 6, Section 16), the standard 14-day distance-selling withdrawal right does not apply to made-to-order or quickly perishable goods such as freshly baked food. These terms explain Suklaamo cancellation and refund handling transparently before ordering.',
+      },
+      {
+        heading: '2. Order Requests and Confirmation',
+        body: 'Submitting an order through the website is an order request, not a confirmed order. We review availability and contact you to confirm. Your order is guaranteed only after confirmation is sent by us.',
+      },
+      {
+        heading: '3. Payment Timing',
+        body: 'After confirmation, payment must be completed in full no later than 24 hours before the scheduled pickup time. If payment is not received by that deadline, we may cancel the order and release the pickup slot.',
+      },
+      {
+        heading: '4. Cancellations and Refunds',
+        body: 'If you cancel 24 hours or more before pickup: full refund (100%). If you cancel less than 24 hours before pickup: partial refund (50%) to reflect ingredients and preparation time already committed. No-show or uncollected orders without prior cancellation: no refund. Contact us as soon as possible if you need to cancel.',
+      },
+      {
+        heading: '5. If We Cancel Your Order',
+        body: 'If we are unable to fulfil your order for reasons on our side (for example ingredient unavailability), we will contact you quickly and offer either an alternative or a full refund regardless of timing.',
+      },
+      {
+        heading: '6. Refund Method and Timing',
+        body: 'Approved refunds are returned to the same payment method used for the original order, within [insert your realistic timeframe, for example 5 business days] after cancellation confirmation.',
+      },
+      {
+        heading: '7. Pickup Responsibility',
+        body: 'You are responsible for collecting your order during the confirmed pickup window (Fri 17:00-21:00, Sat-Sun 16:00-20:00, or as otherwise agreed). Late collection may affect product quality. Missed pickups are handled under Section 4.',
+      },
+      {
+        heading: '8. Complaints',
+        body: 'If you are unhappy with an order or believe the policy was not followed fairly, contact us first so we can resolve it directly. If unresolved, Finnish consumers may refer disputes to Kuluttajariitalautakunta: https://www.kuluttajariita.fi.',
+      },
+      {
+        heading: 'Policy Updates',
+        body: 'These policies should show a last-reviewed date. Suklaamo may update them from time to time, and the version shown at the time of the order applies.',
+      },
+    ],
+  },
+};
 
 const getTomorrowDate = () => {
   const tomorrow = new Date();
@@ -52,7 +165,33 @@ export default function CheckoutPage() {
   });
   const [serverError, setServerError] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const minPickupDate = getTomorrowDate();
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
+  const [policyTouched, setPolicyTouched] = useState(false);
+  const [isPolicyDialogOpen, setIsPolicyDialogOpen] = useState(false);
+  const [activePolicy, setActivePolicy] = useState<PolicyKey>('privacy');
+  const [minPickupDate, setMinPickupDate] = useState('');
+
+  useEffect(() => {
+    setMinPickupDate(getTomorrowDate());
+  }, []);
+
+  useEffect(() => {
+    if (!isPolicyDialogOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsPolicyDialogOpen(false);
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isPolicyDialogOpen]);
 
   const totalAmount = items.reduce((sum, item) => sum + parsePrice(item.product.price) * item.quantity, 0);
 
@@ -115,14 +254,27 @@ export default function CheckoutPage() {
     getFieldError('email', email) ||
     getFieldError('pickupDate', pickupDate)
   );
-  const isSubmitDisabled = status === 'submitting' || !items.length || !hasRequiredValues || hasClientErrors;
+
+  const policyValidationError = policyTouched && !acceptedPolicies
+    ? 'Please confirm that you agree to the Privacy Policy, Allergen Information Policy and Cancellation & Refund Policy.'
+    : '';
+  const policyServerError = errors.policyAccepted ?? '';
+  const policyError = policyValidationError || policyServerError;
+
+  const isSubmitDisabled = status === 'submitting' || !items.length || !hasRequiredValues || hasClientErrors || !acceptedPolicies;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!items.length) return;
 
     setTouched({ name: true, phone: true, email: true, pickupDate: true });
+    setPolicyTouched(true);
     if (!validateAllFields()) {
+      setStatus('error');
+      return;
+    }
+
+    if (!acceptedPolicies) {
       setStatus('error');
       return;
     }
@@ -143,6 +295,7 @@ export default function CheckoutPage() {
           email,
           pickupDate,
           notes,
+          policyAccepted: acceptedPolicies,
           items: items.map((item) => ({
             id: item.product.id,
             name: item.product.name,
@@ -210,23 +363,24 @@ export default function CheckoutPage() {
     <main className="min-h-screen flex flex-col bg-background text-text-dark">
       <Navbar />
       <section className="flex-1 container mx-auto py-16">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_0.9fr]">
-          <motion.div variants={fieldVariants} initial="hidden" animate="visible" className="space-y-8 rounded-[3rem] bg-white p-8 shadow-soft">
-            <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Checkout</p>
-              <h1 className="mt-3 text-3xl font-black text-text-dark sm:text-4xl">Place your order request</h1>
-            </div>
-
-            {!items.length ? (
-              <div className="rounded-[2.5rem] bg-[#fff4df] p-10 text-center">
-                <p className="text-lg font-semibold text-primary">No items in cart</p>
-                <p className="mt-3 text-sm leading-7 text-text-muted">Add something from the catalogue before checking out.</p>
-                <Link href="/catalogue" className="mt-6 inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#d38a24]">
-                  Browse catalogue
-                </Link>
+        <div className="grid gap-10 lg:grid-cols-[1.35fr_0.95fr] lg:items-start">
+          <motion.div variants={fieldVariants} initial="hidden" animate="visible" className="space-y-6">
+            <div className="rounded-[3rem] bg-white p-8 shadow-soft">
+              <div>
+                <p className="text-sm uppercase tracking-[0.35em] text-primary">Checkout</p>
+                <h1 className="mt-3 text-3xl font-black text-text-dark sm:text-4xl">Place your order request</h1>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="grid gap-6">
+
+              {!items.length ? (
+                <div className="mt-8 rounded-[2.5rem] bg-[#fff4df] p-10 text-center">
+                  <p className="text-lg font-semibold text-primary">No items in cart</p>
+                  <p className="mt-3 text-sm leading-7 text-text-muted">Add something from the catalogue before checking out.</p>
+                  <Link href="/catalogue" className="mt-6 inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#d38a24]">
+                    Browse catalogue
+                  </Link>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="mt-8 grid gap-6">
                 <div className="grid gap-6 sm:grid-cols-2">
                   <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.name ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
@@ -311,7 +465,7 @@ export default function CheckoutPage() {
                     <input
                       type="date"
                       value={pickupDate}
-                      min={minPickupDate}
+                      min={minPickupDate || undefined}
                       onChange={(event) => {
                         const value = event.target.value;
                         setPickupDate(value);
@@ -331,29 +485,99 @@ export default function CheckoutPage() {
                     {errors.pickupDate && touched.pickupDate ? <p id="checkout-pickup-error" role="alert" className="mt-2 text-xs text-red-600">{errors.pickupDate}</p> : null}
                   </label>
                 </div>
-                <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-3 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="pointer-events-none absolute left-4 top-3 z-10 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
+                <label className="group relative block rounded-[1.75rem] border border-border bg-[#fbf7f0] text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <span className="block px-4 pt-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                     Notes
                   </span>
-                  <div className="pt-6">
-                    <textarea
-                      value={notes}
-                      onChange={(event) => setNotes(event.target.value)}
-                      rows={5}
-                      className="block w-full min-h-[7.5rem] border-0 bg-transparent p-0 text-sm leading-6 outline-none focus:ring-0"
-                    />
-                  </div>
+                  <textarea
+                    value={notes}
+                    onChange={(event) => setNotes(event.target.value)}
+                    rows={5}
+                    className="block w-full min-h-[7.5rem] resize-y border-0 bg-transparent px-4 pb-3 text-sm leading-6 outline-none focus:ring-0"
+                  />
                 </label>
+
+                <div className={`rounded-[1.75rem] border bg-[#fbf7f0] p-5 ${policyError ? 'border-red-500' : 'border-border'}`}>
+                  <div className="flex items-start gap-3">
+                    <input
+                      id="checkout-policy-acceptance"
+                      type="checkbox"
+                      checked={acceptedPolicies}
+                      onChange={(event) => {
+                        setAcceptedPolicies(event.target.checked);
+                        setPolicyTouched(true);
+                        setErrors((current) => {
+                          if (!current.policyAccepted) return current;
+                          const nextErrors = { ...current };
+                          delete nextErrors.policyAccepted;
+                          return nextErrors;
+                        });
+                      }}
+                      onBlur={() => setPolicyTouched(true)}
+                      aria-invalid={Boolean(policyError)}
+                      aria-describedby={policyError ? 'checkout-policy-error' : undefined}
+                      className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary/30"
+                    />
+                    <label htmlFor="checkout-policy-acceptance" className="text-sm leading-7 text-text-muted">
+                      I have read and agree to the Privacy Policy, Allergen Information Policy and Cancellation & Refund Policy.
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsPolicyDialogOpen(true)}
+                    className="mt-3 text-sm font-semibold text-primary underline underline-offset-4 hover:text-[#5b3a1e]"
+                  >
+                    View Policies
+                  </button>
+
+                  {policyError ? (
+                    <p id="checkout-policy-error" role="alert" className="mt-3 text-xs text-red-600">
+                      {policyError}
+                    </p>
+                  ) : null}
+                </div>
+
                 {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}
                 <Button type="submit" className="w-full inline-flex items-center justify-center gap-2" disabled={isSubmitDisabled}>
                   <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                   {status === 'submitting' ? 'Submitting...' : 'Place Order Request'}
                 </Button>
               </form>
-            )}
+              )}
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="rounded-[2rem] bg-white p-6 shadow-soft">
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup information</p>
+                <div className="mt-4 space-y-3 text-sm leading-7 text-text-muted">
+                  <p><span className="font-semibold text-text-dark">Pickup Address:</span><br />Peltolankaari 20<br />90230 Oulu</p>
+                  <p><span className="font-semibold text-text-dark">Pickup Hours:</span><br />Friday: 17:00–21:00<br />Saturday–Sunday: 16:00–20:00</p>
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] bg-white p-6 shadow-soft">
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Payment information</p>
+                <div className="mt-4 space-y-3 text-sm leading-7 text-text-muted">
+                  <p><span className="font-semibold text-text-dark">Payment Methods:</span><br />MobilePay<br />Bank Transfer</p>
+                  <p>Card payments are currently unavailable.</p>
+                  <p>We will send payment instructions after confirming your order.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-soft">
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Checkout FAQ</p>
+              <div className="mt-4 space-y-4 text-sm leading-7 text-text-muted">
+                <p><span className="font-semibold text-text-dark">What if my item isn&apos;t available?</span><br />We will contact you and provide alternatives or cancel the order.</p>
+                <p><span className="font-semibold text-text-dark">Can I cancel my order?</span><br />Orders may be cancelled before confirmation.</p>
+                <p><span className="font-semibold text-text-dark">Where do I pick up my order?</span><br />Peltolankaari 20, 90230 Oulu.</p>
+                <p><span className="font-semibold text-text-dark">When will I hear back?</span><br />We typically respond within a few hours during operating days.</p>
+              </div>
+            </div>
           </motion.div>
 
-          <motion.aside variants={fieldVariants} initial="hidden" animate="visible" className="space-y-6 rounded-[3rem] bg-surface p-8 shadow-soft">
+          <motion.aside variants={fieldVariants} initial="hidden" animate="visible" className="space-y-6 rounded-[3rem] bg-surface p-8 shadow-soft lg:sticky lg:top-28">
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
               <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order summary</p>
               <div className="mt-6 space-y-4">
@@ -391,9 +615,85 @@ export default function CheckoutPage() {
                 </li>
               </ol>
             </div>
+            <div className="rounded-[2rem] bg-white p-6 shadow-soft">
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order terms</p>
+              <p className="mt-4 text-sm leading-7 text-text-muted">
+                Orders are confirmed after availability review. Reserve your order before Thursday 18:00 for weekend pickup.
+              </p>
+            </div>
           </motion.aside>
         </div>
       </section>
+
+      <AnimatePresence>
+        {isPolicyDialogOpen ? (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-3 sm:items-center sm:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsPolicyDialogOpen(false)}
+          >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="checkout-policy-title"
+              className="relative w-full max-w-3xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl"
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.98 }}
+              transition={{ duration: 0.24, ease: 'easeOut' }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-border px-6 py-5 sm:px-8">
+                <h2 id="checkout-policy-title" className="text-xl font-black text-primary">Suklaamo Policies</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsPolicyDialogOpen(false)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-primary transition hover:bg-[#fff5df]"
+                  aria-label="Close policy viewer"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="px-6 pt-5 sm:px-8">
+                <div role="tablist" aria-label="Policy navigation" className="flex flex-wrap gap-2">
+                  {policyTabs.map((tab) => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      role="tab"
+                      aria-selected={activePolicy === tab.key}
+                      onClick={() => setActivePolicy(tab.key)}
+                      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                        activePolicy === tab.key
+                          ? 'bg-primary text-white'
+                          : 'border border-border bg-white text-primary hover:bg-[#fff5df]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="max-h-[62vh] overflow-y-auto px-6 pb-8 pt-5 sm:px-8">
+                <div role="tabpanel" className="space-y-5">
+                  <h3 className="text-lg font-black text-text-dark">{policyContent[activePolicy].title}</h3>
+                  {policyContent[activePolicy].sections.map((section) => (
+                    <div key={section.heading} className="rounded-[1.5rem] bg-[#fbf7f0] p-5">
+                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{section.heading}</p>
+                      <p className="mt-3 text-sm leading-7 text-text-muted">{section.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
       <Footer />
     </main>
   );

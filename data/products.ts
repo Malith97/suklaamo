@@ -1,19 +1,39 @@
-export type Category = 'brownies' | 'cookies' | 'cakes' | 'pizzas';
+export type Category = 'brownies' | 'cookies' | 'cakes';
 
-export type Product = {
-  id: string;
-  slug: string;
-  name: string;
-  category: Category;
-  price: string;
-  description: string;
-  image: string;
-  tags: string[];
-  inStock: boolean;
-  ingredients: string[];
+type RawCategory = Category | 'pizzas';
+
+type ProductBase = {
+    id: string;
+    slug: string;
+    name: string;
+    category: Category;
+    price: string;
+    description: string;
+    image: string;
+    tags: string[];
+    inStock: boolean;
+    ingredients: string[];
 };
 
-export const products: Product[] = [
+export type ProductDetails = {
+    servingSize: string;
+    weight: string;
+    leadTime: string;
+    allergenInformation: string;
+};
+
+type RawProduct = Omit<ProductBase, 'category'> & { category: RawCategory };
+
+export type Product = ProductBase & ProductDetails;
+
+export const productDetails: ProductDetails = {
+    servingSize: 'Whole cake (serves 8 people)',
+    weight: 'Approx. 1.5kg',
+    leadTime: 'Order 48 hours in advance',
+    allergenInformation: 'Contact us before ordering regarding allergens and dietary requirements.',
+};
+
+const rawProducts: RawProduct[] = [
     {
         id: '1',
         slug: 'chocolate-fudge-cupcakes',
@@ -334,3 +354,10 @@ export const products: Product[] = [
         ],
     },
 ];
+
+export const products: Product[] = rawProducts
+    .filter((product): product is Omit<RawProduct, 'category'> & { category: Category } => product.category !== 'pizzas')
+    .map((product) => ({
+        ...productDetails,
+        ...product,
+    }));

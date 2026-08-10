@@ -26,6 +26,7 @@ export default function SmartImage({
 }: SmartImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const usesFill = Boolean(rest.fill);
 
   const normalizedSrc = useMemo(() => {
     if (typeof src === 'string') {
@@ -40,7 +41,12 @@ export default function SmartImage({
     src: hasError ? fallbackSrc : normalizedSrc,
     className: `relative h-full w-full min-w-0 ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 ${imgClassName}`,
     onLoadingComplete: () => setIsLoaded(true),
-    onError: () => setHasError(true),
+    onError: () => {
+      if (!hasError) {
+        setHasError(true);
+        setIsLoaded(false);
+      }
+    },
     loading: priority ? 'eager' : 'lazy',
     priority,
     ...(sizes ? { sizes } : {}),
@@ -48,7 +54,7 @@ export default function SmartImage({
   };
 
   return (
-    <div className={`relative overflow-hidden min-w-0 ${wrapperClassName}`}>
+    <div className={`relative overflow-hidden min-w-0 ${usesFill ? 'h-full w-full' : ''} ${wrapperClassName}`}>
       {!isLoaded && (
         <div className={`absolute inset-0 ${skeletonClassName}`} aria-hidden="true" />
       )}

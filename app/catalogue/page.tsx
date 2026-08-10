@@ -8,7 +8,7 @@ import { products } from '../../data/products';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
-const tabs = ['All', 'Cakes', 'Brownies', 'Cookies', 'Pizzas'];
+const tabs = ['All', 'Cakes', 'Brownies', 'Cookies'];
 
 const fadeSection = {
   hidden: { opacity: 0, y: 20 },
@@ -33,9 +33,7 @@ export default function CataloguePage() {
       <motion.section
         className="container mx-auto flex-1 py-16"
         initial="hidden"
-        // whileInView="visible"
         animate="visible"
-        // viewport={{ once: true, amount: 0.2 }}
         variants={fadeSection}
       >
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
@@ -51,6 +49,10 @@ export default function CataloguePage() {
               Reserve before Thursday 18:00 for friday and weekend collection. Popular items sell out fast.
             </p>
           </div>
+        </div>
+
+        <div className="mt-6 rounded-[2rem] bg-[#fff4df] p-5 text-sm text-black leading-7 shadow-soft">
+          <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Reserve your order before Thursday 18:00 for Weekend pickup</p>
         </div>
 
         <div className="mt-10 flex flex-wrap gap-3">

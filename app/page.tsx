@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SectionHeading from '../components/SectionHeading';
@@ -12,10 +13,17 @@ import SmartImage from '../components/SmartImage';
 import { products } from '../data/products';
 
 const featured = products[0];
+const heroSlides = products.slice(0, 4).map((product) => product.image);
+const heroSlideDurations = [4200, 5000, 5400, 4600];
+const stats = [
+  { value: '24', label: 'Orders Fulfilled' },
+  { value: '9', label: 'Happy Customers' },
+  { value: '36', label: 'Chocolate Treats Made' },
+];
 const categories = [
-  { label: 'Brownies', count: 12 },
-  { label: 'Cookies', count: 9 },
-  { label: 'Cakes', count: 6 },
+  { label: 'Brownies', count: 1 },
+  { label: 'Cookies', count: 1 },
+  { label: 'Cakes', count: 1 },
 ];
 
 const fadeSection = {
@@ -34,6 +42,16 @@ const cardReveal = {
 };
 
 export default function Home() {
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setHeroIndex((current) => (current + 1) % heroSlides.length);
+    }, heroSlideDurations[heroIndex]);
+
+    return () => window.clearTimeout(timeout);
+  }, [heroIndex]);
+
   return (
     <main className="min-h-screen bg-background text-text-dark">
       <Navbar />
@@ -66,6 +84,9 @@ export default function Home() {
             <p className="max-w-2xl text-base leading-8 text-[#5a4030] sm:text-lg">
               Every treat comes from my kitchen in Oulu. Brownies, cookies and small cakes made with good chocolate, a steady coffee and a warm welcome.
             </p>
+            <div className="inline-flex rounded-full border border-accent-gold/30 bg-white/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-soft sm:text-sm">
+              🍫 Now taking orders for this weekend
+            </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/contact" className="inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#d38a24]">
                 Reserve a batch
@@ -82,21 +103,51 @@ export default function Home() {
           </motion.div>
 
           <div className="relative overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
-            <div className="absolute left-3 top-3 z-10 rounded-full bg-accent-sage/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-accent-sage shadow-soft sm:left-5 sm:top-6 sm:px-5 sm:py-2 sm:text-xs sm:tracking-[0.3em]">
+            <div className="absolute left-3 top-3 z-20 rounded-full bg-accent-sage/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-accent-sage shadow-soft sm:left-5 sm:top-6 sm:px-5 sm:py-2 sm:text-xs sm:tracking-[0.3em]">
               Warm batch
             </div>
-            <SmartImage
-              src="/gallery/hero-2.webp"
-              alt="Chocolate bakery product showcase"
-              fill
-              priority
-              sizes="100vw"
-              wrapperClassName="aspect-[4/3] h-auto min-h-[320px] sm:min-h-[420px]"
-              imgClassName="object-cover"
-            />
+            <div className="relative aspect-[4/3] min-h-[320px] overflow-hidden sm:min-h-[420px]">
+              {heroSlides.map((src, index) => (
+                <motion.div
+                  key={src}
+                  className="absolute inset-0"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: index === heroIndex ? 1 : 0 }}
+                  transition={{ duration: 0.8, ease: 'easeInOut' }}
+                >
+                  <SmartImage
+                    src={src}
+                    alt="Chocolate bakery product showcase"
+                    fill
+                    priority={index === 0}
+                    sizes="100vw"
+                    wrapperClassName="h-full w-full"
+                    imgClassName="object-cover"
+                  />
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </motion.section>
+
+      <section className="container mx-auto pb-6">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              className="rounded-[2.25rem] bg-white p-6 text-center shadow-soft"
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.3, delay: index * 0.08 }}
+            >
+              <p className="text-4xl font-black text-primary sm:text-5xl">{stat.value}</p>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.28em] text-text-muted">{stat.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
       <section className="container mx-auto space-y-10 py-10 lg:py-14">
         <motion.div variants={fadeSection}>
