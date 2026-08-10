@@ -87,6 +87,17 @@ const localBusinessStructuredData = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fredoka.variable} ${inter.variable}`}>
+      <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-52E77WBZDT" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-52E77WBZDT');`,
+          }}
+        />
+      </head>
       <body suppressHydrationWarning className="pt-12 bg-background text-text-dark">
         <PromoTicker />
         {children}
