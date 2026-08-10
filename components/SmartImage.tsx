@@ -10,6 +10,7 @@ type SmartImageProps = Omit<ImageProps, 'onError'> & {
   skeletonClassName?: string;
   wrapperClassName?: string;
   imgClassName?: string;
+  sizes?: string;
 };
 
 export default function SmartImage({
@@ -19,6 +20,7 @@ export default function SmartImage({
   imgClassName = '',
   fallbackSrc = fallbackPlaceholder,
   skeletonClassName = 'animate-pulse bg-[#f3efe5]',
+  sizes,
   priority,
   ...rest
 }: SmartImageProps) {
@@ -32,21 +34,25 @@ export default function SmartImage({
     return src;
   }, [src]);
 
+  const imageAlt = typeof alt === 'string' ? alt : '';
+
+  const imageProps: Omit<ImageProps, 'alt'> = {
+    src: hasError ? fallbackSrc : normalizedSrc,
+    className: `relative h-full w-full min-w-0 ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 ${imgClassName}`,
+    onLoadingComplete: () => setIsLoaded(true),
+    onError: () => setHasError(true),
+    loading: priority ? 'eager' : 'lazy',
+    priority,
+    ...(sizes ? { sizes } : {}),
+    ...rest,
+  };
+
   return (
-    <div className={`relative overflow-hidden ${wrapperClassName}`}>
+    <div className={`relative overflow-hidden min-w-0 ${wrapperClassName}`}>
       {!isLoaded && (
         <div className={`absolute inset-0 ${skeletonClassName}`} aria-hidden="true" />
       )}
-      <Image
-        src={hasError ? fallbackSrc : normalizedSrc}
-        alt={alt ?? ''}
-        className={`relative h-full w-full ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 ${imgClassName}`}
-        onLoad={() => setIsLoaded(true)}
-        onError={() => setHasError(true)}
-        loading={priority ? 'eager' : 'lazy'}
-        priority={priority}
-        {...rest}
-      />
+      <Image alt={imageAlt} {...imageProps} />
     </div>
   );
 }

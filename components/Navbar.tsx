@@ -16,11 +16,19 @@ const navLinks = [
   { label: 'Contact', href: '/contact' },
 ];
 
-const menuIconVariants = {
-  closed: { rotate: 0, y: 0, opacity: 1 },
-  openTop: { rotate: 45, y: 0 },
-  openMiddle: { opacity: 0 },
-  openBottom: { rotate: -45, y: 0 },
+const topLineVariants = {
+  closed: { rotate: 0, y: -6, opacity: 1 },
+  open: { rotate: 45, y: 0, opacity: 1 },
+};
+
+const middleLineVariants = {
+  closed: { opacity: 1 },
+  open: { opacity: 0 },
+};
+
+const bottomLineVariants = {
+  closed: { rotate: 0, y: 6, opacity: 1 },
+  open: { rotate: -45, y: 0, opacity: 1 },
 };
 
 export default function Navbar() {
@@ -30,9 +38,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-12 z-40 border-b border-white/80 bg-white/90 backdrop-blur-2xl shadow-soft">
-      <div className="container mx-auto flex items-center justify-between gap-4 py-4">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="text-xl font-black uppercase tracking-[0.35em] text-primary">
+      <div className="container mx-auto flex flex-wrap items-center justify-between gap-4 py-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <Link href="/" className="min-w-0 text-xl font-black uppercase tracking-[0.35em] text-primary">
             SUKLAAMO
           </Link>
           <span className="hidden text-xs uppercase tracking-[0.4em] text-primary/70 md:inline-flex">
@@ -59,10 +67,11 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Link href="/cart" aria-label={`Order (${itemCount})`} className="inline-flex items-center gap-2 rounded-full bg-accent-gold px-4 py-3 text-sm font-semibold text-primary shadow-soft transition hover:bg-[#d38a24] md:px-5">
+        <div className="flex shrink-0 items-center gap-3">
+          <Link href="/cart" aria-label={`Cart (${itemCount})`} className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent-gold px-4 py-3 text-sm font-semibold text-primary shadow-soft transition hover:bg-[#d38a24] md:px-5">
             <ShoppingBag className="h-5 w-5" aria-hidden="true" />
-            <span>Order ({itemCount})</span>
+            <span className="md:hidden">({itemCount})</span>
+            <span className="hidden md:inline">Order ({itemCount})</span>
           </Link>
           <motion.button
             type="button"
@@ -74,20 +83,20 @@ export default function Navbar() {
           >
             <motion.span
               className="absolute block h-0.5 w-5 rounded-full bg-current"
-              variants={menuIconVariants}
-              animate={isOpen ? 'openTop' : 'closed'}
+              variants={topLineVariants}
+              animate={isOpen ? 'open' : 'closed'}
               transition={{ duration: 0.24, ease: 'easeOut' }}
             />
             <motion.span
               className="absolute block h-0.5 w-5 rounded-full bg-current"
-              variants={menuIconVariants}
-              animate={isOpen ? 'openMiddle' : 'closed'}
+              variants={middleLineVariants}
+              animate={isOpen ? 'open' : 'closed'}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             />
             <motion.span
               className="absolute block h-0.5 w-5 rounded-full bg-current"
-              variants={menuIconVariants}
-              animate={isOpen ? 'openBottom' : 'closed'}
+              variants={bottomLineVariants}
+              animate={isOpen ? 'open' : 'closed'}
               transition={{ duration: 0.24, ease: 'easeOut' }}
             />
           </motion.button>

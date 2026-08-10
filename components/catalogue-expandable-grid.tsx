@@ -113,23 +113,30 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
             key={product.id}
             layout
             transition={cardTransition}
-            className="group relative overflow-hidden rounded-[2.5rem] border border-border bg-[#fff6ed] shadow-soft transition hover:-translate-y-0.5 hover:shadow-medium"
+            className="group relative min-w-0 overflow-hidden rounded-[2.5rem] border border-border bg-[#fff6ed] shadow-soft transition hover:-translate-y-0.5 hover:shadow-medium"
           >
             <button
               type="button"
               onClick={(event) => openCard(product.id, event.currentTarget)}
               aria-expanded={selectedId === product.id}
-              className="block w-full text-left"
+              className="block w-full min-w-0 text-left"
             >
               <div className="relative h-72 w-full overflow-hidden rounded-[2.5rem]">
                 <motion.div layoutId={`image-${product.id}`} className="absolute inset-0">
-                  <SmartImage src={product.image} alt={product.name} fill wrapperClassName="h-full w-full" imgClassName="object-cover" />
+                  <SmartImage
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                    wrapperClassName="h-full w-full"
+                    imgClassName="object-cover"
+                  />
                 </motion.div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6">
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="max-w-[70%] text-2xl font-black uppercase tracking-[-0.03em] text-white sm:text-3xl">
+                      <h3 className="max-w-[70%] break-words text-2xl font-black uppercase tracking-[-0.03em] text-white sm:text-3xl">
                         {product.name}
                       </h3>
                       <span className="rounded-full bg-[#3a2414] px-4 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-soft">
@@ -192,9 +199,9 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
                     src={selectedProduct.image}
                     alt={selectedProduct.name}
                     fill
+                    sizes="(max-width: 768px) 100vw, 80vw"
                     wrapperClassName="h-full w-full"
                     imgClassName="object-contain"
-                    sizes="(max-width: 768px) 100vw, 80vw"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />

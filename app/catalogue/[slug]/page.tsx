@@ -32,7 +32,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <SectionHeading title={product.name} subtitle={product.description} />
             <div className="rounded-[2.5rem] bg-surface p-6 shadow-card">
               <div className="relative h-[420px] overflow-hidden rounded-[2rem] bg-[#f7e1cc] sm:h-[520px]">
-                <SmartImage src={product.image} alt={product.name} fill imgClassName="object-cover" />
+                <SmartImage src={product.image} alt={product.name} fill sizes="100vw" imgClassName="object-cover" />
               </div>
             </div>
 

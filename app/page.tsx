@@ -81,8 +81,8 @@ export default function Home() {
             </div> */}
           </motion.div>
 
-          <div className="overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
-            <div className="absolute left-5 top-6 rounded-full bg-accent-sage/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-accent-sage shadow-soft">
+          <div className="relative overflow-hidden rounded-[3rem] bg-[#f7e8d6] shadow-soft lg:max-w-[640px]">
+            <div className="absolute left-3 top-3 z-10 rounded-full bg-accent-sage/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-accent-sage shadow-soft sm:left-5 sm:top-6 sm:px-5 sm:py-2 sm:text-xs sm:tracking-[0.3em]">
               Warm batch
             </div>
             <SmartImage
@@ -90,7 +90,8 @@ export default function Home() {
               alt="Chocolate bakery product showcase"
               fill
               priority
-              wrapperClassName="h-[420px] sm:h-[640px]"
+              sizes="100vw"
+              wrapperClassName="aspect-[4/3] h-auto min-h-[320px] sm:min-h-[420px]"
               imgClassName="object-cover"
             />
           </div>
@@ -127,6 +128,7 @@ export default function Home() {
               src="/products/img-03.webp"
               alt="Death by Chocolate cake"
               fill
+              sizes="(max-width: 768px) 100vw, 45vw"
               wrapperClassName="aspect-[4/5] sm:aspect-[5/6]"
               imgClassName="object-cover transition duration-500 group-hover:scale-105"
             />
@@ -193,6 +195,7 @@ export default function Home() {
                       src={item.image}
                       alt={item.name}
                       fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
                       wrapperClassName="h-full w-full"
                       imgClassName="object-cover transition duration-500 group-hover:scale-105"
                     />
@@ -239,6 +242,7 @@ export default function Home() {
               src="/products/img-05.webp"
               alt="Assorted baking treats"
               fill
+              sizes="100vw"
               wrapperClassName="h-[280px] sm:h-[360px]"
               imgClassName="object-cover"
             />
@@ -249,6 +253,7 @@ export default function Home() {
                   src="/products/img-02.webp"
                   alt="Chocolate cookies"
                   fill
+                  sizes="(max-width: 640px) 100vw, 45vw"
                   wrapperClassName="h-[180px]"
                   imgClassName="object-cover"
                 />
@@ -258,6 +263,7 @@ export default function Home() {
                   src="/products/img-03.webp"
                   alt="Chocolate brownie tray"
                   fill
+                  sizes="(max-width: 640px) 100vw, 45vw"
                   wrapperClassName="h-[180px]"
                   imgClassName="object-cover"
                 />

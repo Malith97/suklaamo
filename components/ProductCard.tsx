@@ -17,22 +17,29 @@ type ProductCardProps = {
 
 export default function ProductCard({ product, href, onClick }: ProductCardProps) {
   const content = (
-    <div className="group flex h-full flex-col overflow-hidden rounded-[2rem] bg-surface shadow-card transition duration-300 hover:-translate-y-0.5">
+    <div className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[2rem] bg-surface shadow-card transition duration-300 hover:-translate-y-0.5">
       <motion.div className="relative h-72 overflow-hidden bg-[#fbf4ed]" variants={cardHover}>
           <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.22, ease: 'easeOut' }} className="absolute inset-0">
-          <SmartImage src={product.image} alt={product.name} fill wrapperClassName="h-full w-full" imgClassName="object-cover" />
+          <SmartImage
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, 33vw"
+            wrapperClassName="h-full w-full"
+            imgClassName="object-cover"
+          />
         </motion.div>
       </motion.div>
 
-      <div className="flex flex-1 flex-col justify-between space-y-4 p-6">
+      <div className="flex flex-1 min-w-0 flex-col justify-between space-y-4 p-6">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             {product.tags.slice(0, 2).map((tag) => (
               <Badge key={tag} label={tag} variant={tag === 'Gluten-free' ? 'sage' : 'cocoa'} />
             ))}
           </div>
-          <h3 className="text-xl font-bold text-primary">{product.name}</h3>
-          <p className="text-sm leading-6 text-text-muted line-clamp-3">{product.description}</p>
+          <h3 className="break-words text-xl font-bold text-primary">{product.name}</h3>
+          <p className="break-words text-sm leading-6 text-text-muted line-clamp-3">{product.description}</p>
         </div>
         <div className="mt-4 flex items-center justify-between text-sm font-semibold text-primary">
           <span>{product.price}</span>

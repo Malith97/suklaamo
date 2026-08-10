@@ -66,6 +66,7 @@ export default function PhotoMarquee() {
                   src={src}
                   alt={`Gallery image ${index + 1}`}
                   fill
+                  sizes="(max-width: 640px) 100vw, 260px"
                   wrapperClassName="h-[420px]"
                   imgClassName="object-cover"
                 />

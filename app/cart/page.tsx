@@ -99,14 +99,14 @@ export default function CartPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+                {/* <div className="flex flex-wrap items-center gap-3">
                   <Button variant="secondary" type="button" onClick={clearCart} className="rounded-full px-5 py-3">
-                    Clear cart
+                    Clear Cart
                   </Button>
                   <Link href="/checkout" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#4e2b15]">
-                    Continue to checkout
+                    Continue to Checkout
                   </Link>
-                </div>
+                </div> */}
               </div>
             )}
           </div>
@@ -141,6 +141,14 @@ export default function CartPage() {
               <p className="text-sm uppercase tracking-[0.35em] text-primary">Pickup details</p>
               <p className="mt-4 text-sm leading-7 text-text-muted">Pickup orders are prepared for local collection from Oulu. We will confirm your exact pickup time on checkout.</p>
             </div>
+            <div className="flex flex-wrap items-center gap-3">
+                  <Button variant="secondary" type="button" onClick={clearCart} className="rounded-full px-5 py-3">
+                    Clear Cart
+                  </Button>
+                  <Link href="/checkout" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#4e2b15]">
+                    Continue to Checkout
+                  </Link>
+              </div>
           </aside>
         </div>
       </section>

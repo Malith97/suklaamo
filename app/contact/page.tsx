@@ -120,20 +120,22 @@ export default function ContactPage() {
                     {errors.email ? <p id="contact-email-error" className="mt-2 text-xs text-red-600">{errors.email}</p> : null}
                   </label>
                 </div>
-                <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
+                <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-3 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <span className="pointer-events-none absolute left-4 top-3 z-10 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                     What do you want?
                   </span>
-                  <textarea
-                    name="message"
-                    rows={5}
-                    value={formState.message}
-                    onChange={(event) => setFormState((current) => ({ ...current, message: event.target.value }))}
-                    required
-                    aria-invalid={Boolean(errors.message)}
-                    aria-describedby={errors.message ? 'contact-message-error' : undefined}
-                    className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
-                  />
+                  <div className="pt-6">
+                    <textarea
+                      name="message"
+                      rows={5}
+                      value={formState.message}
+                      onChange={(event) => setFormState((current) => ({ ...current, message: event.target.value }))}
+                      required
+                      aria-invalid={Boolean(errors.message)}
+                      aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                      className="block w-full min-h-[7.5rem] border-0 bg-transparent p-0 text-sm leading-6 outline-none focus:ring-0"
+                    />
+                  </div>
                   {errors.message ? <p id="contact-message-error" className="mt-2 text-xs text-red-600">{errors.message}</p> : null}
                 </label>
                 {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}

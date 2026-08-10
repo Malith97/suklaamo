@@ -8,6 +8,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Button from '../../components/Button';
 import { useCart } from '../../context/CartContext';
+import { validateEmail, validateFinnishPhone, validatePickupDate } from '../../lib/validators';
 
 const ShoppingBag = ShoppingBagRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -19,6 +20,20 @@ const fieldVariants = {
 const parsePrice = (price: string) => Number(price.replace(/[^\d]/g, ''));
 const formatPrice = (value: number) => `€${value}`;
 
+type CheckoutField = 'name' | 'phone' | 'email' | 'pickupDate';
+
+const getTomorrowDate = () => {
+  const tomorrow = new Date();
+  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const year = tomorrow.getFullYear();
+  const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const day = String(tomorrow.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
 export default function CheckoutPage() {
   const { items, clearCart } = useCart();
   const [name, setName] = useState('');
@@ -28,17 +43,90 @@ export default function CheckoutPage() {
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<CheckoutField, boolean>>({
+    name: false,
+    phone: false,
+    email: false,
+    pickupDate: false,
+  });
   const [serverError, setServerError] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const minPickupDate = getTomorrowDate();
 
   const totalAmount = items.reduce((sum, item) => sum + parsePrice(item.product.price) * item.quantity, 0);
+
+  const getFieldError = (field: CheckoutField, value: string) => {
+    const sanitizedValue = value.trim();
+
+    if (field === 'name') {
+      if (!sanitizedValue) return 'Name is required.';
+      return '';
+    }
+
+    if (field === 'phone') {
+      if (!sanitizedValue) return 'Phone is required.';
+      if (!validateFinnishPhone(sanitizedValue)) return 'Please enter a valid Finnish phone number.';
+      return '';
+    }
+
+    if (field === 'email') {
+      if (!sanitizedValue) return 'Email is required.';
+      if (!validateEmail(sanitizedValue)) return 'Please enter a valid email address.';
+      return '';
+    }
+
+    if (!sanitizedValue) return 'Pickup date is required.';
+    if (!validatePickupDate(sanitizedValue)) return 'Pickup date must be in the future.';
+    return '';
+  };
+
+  const setFieldError = (field: CheckoutField, value: string) => {
+    const error = getFieldError(field, value);
+    setErrors((current) => {
+      if (!error && !current[field]) return current;
+      const nextErrors = { ...current };
+      if (error) nextErrors[field] = error;
+      else delete nextErrors[field];
+      return nextErrors;
+    });
+  };
+
+  const validateAllFields = () => {
+    const fieldErrors: Record<string, string> = {};
+    const nameError = getFieldError('name', name);
+    const phoneError = getFieldError('phone', phone);
+    const emailError = getFieldError('email', email);
+    const pickupDateError = getFieldError('pickupDate', pickupDate);
+
+    if (nameError) fieldErrors.name = nameError;
+    if (phoneError) fieldErrors.phone = phoneError;
+    if (emailError) fieldErrors.email = emailError;
+    if (pickupDateError) fieldErrors.pickupDate = pickupDateError;
+
+    setErrors(fieldErrors);
+    return Object.keys(fieldErrors).length === 0;
+  };
+
+  const hasRequiredValues = Boolean(name.trim() && phone.trim() && email.trim() && pickupDate.trim());
+  const hasClientErrors = Boolean(
+    getFieldError('name', name) ||
+    getFieldError('phone', phone) ||
+    getFieldError('email', email) ||
+    getFieldError('pickupDate', pickupDate)
+  );
+  const isSubmitDisabled = status === 'submitting' || !items.length || !hasRequiredValues || hasClientErrors;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!items.length) return;
 
+    setTouched({ name: true, phone: true, email: true, pickupDate: true });
+    if (!validateAllFields()) {
+      setStatus('error');
+      return;
+    }
+
     setStatus('submitting');
-    setErrors({});
     setServerError(null);
 
     const response = await fetch('/api/order', {
@@ -112,77 +200,124 @@ export default function CheckoutPage() {
             ) : (
               <form onSubmit={handleSubmit} className="grid gap-6">
                 <div className="grid gap-6 sm:grid-cols-2">
-                  <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.name ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                       Name
                     </span>
                     <input
                       value={name}
-                      onChange={(event) => setName(event.target.value)}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setName(value);
+                        setTouched((current) => ({ ...current, name: true }));
+                        setServerError(null);
+                        setFieldError('name', value);
+                      }}
+                      onBlur={() => {
+                        setTouched((current) => ({ ...current, name: true }));
+                        setFieldError('name', name);
+                      }}
                       required
+                      aria-invalid={Boolean(errors.name)}
+                      aria-describedby={errors.name ? 'checkout-name-error' : undefined}
                       className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
                     />
+                    {errors.name && touched.name ? <p id="checkout-name-error" role="alert" className="mt-2 text-xs text-red-600">{errors.name}</p> : null}
                   </label>
-                  <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.phone ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                       Phone
                     </span>
                     <input
                       value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setPhone(value);
+                        setTouched((current) => ({ ...current, phone: true }));
+                        setServerError(null);
+                        setFieldError('phone', value);
+                      }}
+                      onBlur={() => {
+                        setTouched((current) => ({ ...current, phone: true }));
+                        setFieldError('phone', phone);
+                      }}
                       required
+                      inputMode="tel"
                       aria-invalid={Boolean(errors.phone)}
                       aria-describedby={errors.phone ? 'checkout-phone-error' : undefined}
                       className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
                     />
-                    {errors.phone ? <p id="checkout-phone-error" className="mt-2 text-xs text-red-600">{errors.phone}</p> : null}
+                    {errors.phone && touched.phone ? <p id="checkout-phone-error" role="alert" className="mt-2 text-xs text-red-600">{errors.phone}</p> : null}
                   </label>
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2">
-                  <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.email ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                       Email
                     </span>
                     <input
                       type="email"
                       value={email}
-                      onChange={(event) => setEmail(event.target.value)}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setEmail(value);
+                        setTouched((current) => ({ ...current, email: true }));
+                        setServerError(null);
+                        setFieldError('email', value);
+                      }}
+                      onBlur={() => {
+                        setTouched((current) => ({ ...current, email: true }));
+                        setFieldError('email', email);
+                      }}
                       required
                       aria-invalid={Boolean(errors.email)}
                       aria-describedby={errors.email ? 'checkout-email-error' : undefined}
                       className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
                     />
-                    {errors.email ? <p id="checkout-email-error" className="mt-2 text-xs text-red-600">{errors.email}</p> : null}
+                    {errors.email && touched.email ? <p id="checkout-email-error" role="alert" className="mt-2 text-xs text-red-600">{errors.email}</p> : null}
                   </label>
-                  <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.pickupDate ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                       Pickup date
                     </span>
                     <input
                       type="date"
                       value={pickupDate}
-                      onChange={(event) => setPickupDate(event.target.value)}
+                      min={minPickupDate}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setPickupDate(value);
+                        setTouched((current) => ({ ...current, pickupDate: true }));
+                        setServerError(null);
+                        setFieldError('pickupDate', value);
+                      }}
+                      onBlur={() => {
+                        setTouched((current) => ({ ...current, pickupDate: true }));
+                        setFieldError('pickupDate', pickupDate);
+                      }}
                       required
                       aria-invalid={Boolean(errors.pickupDate)}
                       aria-describedby={errors.pickupDate ? 'checkout-pickup-error' : undefined}
                       className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
                     />
-                    {errors.pickupDate ? <p id="checkout-pickup-error" className="mt-2 text-xs text-red-600">{errors.pickupDate}</p> : null}
+                    {errors.pickupDate && touched.pickupDate ? <p id="checkout-pickup-error" role="alert" className="mt-2 text-xs text-red-600">{errors.pickupDate}</p> : null}
                   </label>
                 </div>
-                <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
-                  <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
+                <label className="group relative block overflow-hidden rounded-[1.75rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-3 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
+                  <span className="pointer-events-none absolute left-4 top-3 z-10 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
                     Notes
                   </span>
-                  <textarea
-                    value={notes}
-                    onChange={(event) => setNotes(event.target.value)}
-                    rows={5}
-                    className="mt-2 w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
-                  />
+                  <div className="pt-6">
+                    <textarea
+                      value={notes}
+                      onChange={(event) => setNotes(event.target.value)}
+                      rows={5}
+                      className="block w-full min-h-[7.5rem] border-0 bg-transparent p-0 text-sm leading-6 outline-none focus:ring-0"
+                    />
+                  </div>
                 </label>
                 {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}
-                <Button type="submit" className="w-full inline-flex items-center justify-center gap-2" disabled={status === 'submitting'}>
+                <Button type="submit" className="w-full inline-flex items-center justify-center gap-2" disabled={isSubmitDisabled}>
                   <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                   {status === 'submitting' ? 'Submitting...' : 'Place Order Request'}
                 </Button>
