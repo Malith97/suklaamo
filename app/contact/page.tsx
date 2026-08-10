@@ -80,7 +80,7 @@ export default function ContactPage() {
             <div className="mt-10 rounded-[2rem] bg-[#fff8e8] p-8 shadow-soft">
               <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Custom Orders and Enquiries</p>
               <p className="mt-2 text-sm leading-7 text-[#5a4030]">
-                Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We'll get back to you as soon as possible to discuss your requirements and available pickup dates.
+                Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We will get back to you as soon as possible to discuss your requirements and available pickup dates.
               </p>
             </div>
 
