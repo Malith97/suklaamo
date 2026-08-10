@@ -2,7 +2,6 @@ import './globals.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Fredoka, Inter } from 'next/font/google';
-import Analytics from '../components/Analytics';
 import PromoTicker from '../components/PromoTicker';
 
 const fredoka = Fredoka({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-fredoka' });
@@ -89,7 +88,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fredoka.variable} ${inter.variable}`}>
       <body suppressHydrationWarning className="pt-12 bg-background text-text-dark">
-        <Analytics />
         <PromoTicker />
         {children}
         <script
