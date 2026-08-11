@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { getRequestContext } from '@cloudflare/next-on-pages';
 import { validateOrderForm } from '../../../lib/validators';
 import { checkRateLimit } from '../../../lib/rate-limit';
 import {
@@ -12,21 +11,6 @@ import {
   generateOrderNumber,
   sendResendEmail,
 } from '../../../lib/order-email';
-
-type OrderEmailEnv = {
-  RESEND_API_KEY?: string;
-  ORDER_NOTIFICATION_EMAIL?: string;
-  ORDER_NOTIFICATION_EMAIL_CC?: string;
-  RESEND_FROM_EMAIL?: string;
-};
-
-function getOrderEmailEnv(): OrderEmailEnv {
-  try {
-    return getRequestContext().env as OrderEmailEnv;
-  } catch {
-    return process.env as OrderEmailEnv;
-  }
-}
 
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('host') || 'unknown';
@@ -55,11 +39,10 @@ export async function POST(request: Request) {
     });
   }
 
-  const env = getOrderEmailEnv();
-  const resendApiKey = env.RESEND_API_KEY;
-  const resendFrom = env.RESEND_FROM_EMAIL || 'Suklaamo <onboarding@resend.dev>';
-  const primaryRecipient = env.ORDER_NOTIFICATION_EMAIL;
-  const ccRecipient = env.ORDER_NOTIFICATION_EMAIL_CC;
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const resendFrom = process.env.RESEND_FROM_EMAIL || 'Suklaamo <onboarding@resend.dev>';
+  const primaryRecipient = process.env.ORDER_NOTIFICATION_EMAIL;
+  const ccRecipient = process.env.ORDER_NOTIFICATION_EMAIL_CC;
   const recipients = [primaryRecipient, ccRecipient]
     .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
     .map((value) => value.trim());

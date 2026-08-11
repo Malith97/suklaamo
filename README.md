@@ -69,8 +69,8 @@ The application is optimized for mobile-first browsing, local SEO, and low-frict
 - Zustand
 - React Context
 - Resend
-- Cloudflare Workers / Cloudflare Pages-compatible runtime
-- OpenNext-compatible deployment flow
+- Cloudflare Workers runtime
+- OpenNext / @opennextjs/cloudflare deployment flow
 - ESLint
 - PostCSS
 
@@ -99,7 +99,7 @@ flowchart LR
 ```
 
 ### Deployment Flow
-The app is built as a Next.js production bundle and deployed to a Cloudflare-compatible runtime through an OpenNext-style flow. Runtime secrets and recipient inboxes are injected through the deployment platform, and the order API reads them at request time so the same code can run locally and in production.
+The app is built as a Next.js production bundle and deployed to a Cloudflare Workers runtime through OpenNext. Runtime secrets and recipient inboxes are injected through the deployment platform, and the order API reads them from the worker runtime at request time so the same code can run locally and in production.
 
 ## Folder Structure
 
@@ -149,7 +149,7 @@ ORDER_NOTIFICATION_EMAIL_CC=mileperuma@gmail.com
 - `ORDER_NOTIFICATION_EMAIL_CC`: optional, but recommended. Secondary inbox for the same notifications.
 
 ### Cloudflare Note
-If you deploy on Cloudflare, configure the variables and secrets in the correct environment scope for the deployment target you use, such as Production and Preview. The order route reads runtime values from the Cloudflare request context when available.
+If you deploy on Cloudflare, configure the variables and secrets in the correct environment scope for the deployment target you use, such as Production and Preview. The order route reads runtime values from the worker environment.
 
 ## Local Development
 
@@ -172,7 +172,7 @@ npm run start
 
 ## Production Deployment
 
-Suklaamo is designed for a Cloudflare-hosted production deployment.
+Suklaamo is designed for a Cloudflare Workers production deployment.
 
 ### Cloudflare Workers
 Cloudflare provides the runtime environment for server-side requests, including the order API route and other server-rendered features.
