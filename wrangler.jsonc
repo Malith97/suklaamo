@@ -7,5 +7,10 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "ORDER_NOTIFICATION_EMAIL": "suklaamo@gmail.com",
+    "ORDER_NOTIFICATION_EMAIL_CC": "mileperuma@gmail.com",
+    "RESEND_FROM_EMAIL": "order@suklaamo.fi"
   }
 }

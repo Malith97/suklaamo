@@ -35,7 +35,7 @@ const policyContent: Record<PolicyKey, { title: string; sections: Array<{ headin
     sections: [
       {
         heading: '1. Who We Are (Data Controller)',
-        body: 'Suklaamo is a home bakery based in Oulu, Finland, operated by [Your full legal name], [Business ID / Y-tunnus if registered, or operating as a private individual if not yet registered]. Contact: Email [insert], Address Peltolankaari 20, 90230 Oulu, Finland.',
+        body: 'Suklaamo is a home bakery based in Oulu, Finland, operated by a small home baker, operating as a private individual if not yet registered]. Contact: Email suklaamo@gmail.com, Address Peltolankaari 20, 90230 Oulu, Finland.',
       },
       {
         heading: '2. What Personal Data We Collect',
@@ -51,7 +51,7 @@ const policyContent: Record<PolicyKey, { title: string; sections: Array<{ headin
       },
       {
         heading: '5. How Long We Keep Your Data',
-        body: 'Order and payment records are kept for 6 years from the end of the relevant accounting year (Finnish Accounting Act, Kirjanpitolaki 2 luku 10 §). Contact details and notes not required for accounting (for example enquiries that do not become orders) are kept up to 12 months, then deleted. Marketing communication data (if opted in) is kept until unsubscribe or objection.',
+        body: 'Order and payment records are kept for 1 years from the end of the relevant accounting year (Finnish Accounting Act, Kirjanpitolaki 2 luku 10 §). Contact details and notes not required for accounting (for example enquiries that do not become orders) are kept up to 12 months, then deleted. Marketing communication data (if opted in) is kept until unsubscribe or objection.',
       },
       {
         heading: '6. Your Rights',
