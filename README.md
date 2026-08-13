@@ -138,8 +138,8 @@ Configure these variables in your local environment and in your Cloudflare deplo
 
 ```dotenv
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-RESEND_FROM_EMAIL=order@suklaamo.fi
-ORDER_NOTIFICATION_EMAIL=suklaamo@gmail.com
+RESEND_FROM_EMAIL=orders@suklaamo.fi
+ORDER_NOTIFICATION_EMAIL=orders@suklaamo.fi
 ORDER_NOTIFICATION_EMAIL_CC=mileperuma@gmail.com
 ```
 

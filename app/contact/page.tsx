@@ -82,6 +82,9 @@ export default function ContactPage() {
               <p className="mt-2 text-sm leading-7 text-[#5a4030]">
                 Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We will get back to you as soon as possible to discuss your requirements and available pickup dates.
               </p>
+              <a href="mailto:info@suklaamo.fi" className="mt-4 inline-flex items-center rounded-full bg-[#fff1d6] px-4 py-2 text-sm font-semibold text-primary hover:bg-[#ffe5b3]">
+                info@suklaamo.fi
+              </a>
             </div>
 
             <div className="mt-10 rounded-[3rem] bg-white p-8 shadow-soft">

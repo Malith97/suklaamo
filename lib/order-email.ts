@@ -414,7 +414,7 @@ export function buildCustomerConfirmationEmailHtml(payload: OrderEmailPayload) {
                   <p style="margin:0 0 8px 0;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;font-weight:700;">Suklaamo</p>
                   <p style="margin:0 0 14px 0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;">Chocolate Bakery</p>
                   <p style="margin:0 0 10px 0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;"><a href="https://suklaamo.fi" style="color:#e8a33d;text-decoration:none;">https://suklaamo.fi</a></p>
-                  <p style="margin:0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;">Questions? Reply directly to this suklaamo@gmail.com email.</p>
+                  <p style="margin:0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;">Questions? Reply directly to this orders@suklaamo.fi email.</p>
                 </td>
               </tr>
             </table>

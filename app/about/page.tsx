@@ -33,7 +33,7 @@ export default function AboutPage() {
           <div className="overflow-hidden rounded-[3rem] bg-[#f7e0cd] p-8 shadow-soft transition-transform duration-300 hover:-translate-y-0.5 sm:p-10 lg:mx-auto lg:max-w-[600px]">
             <div className="h-[500px] w-full overflow-hidden rounded-[2.5rem] sm:h-[600px] lg:h-[700px]">
               <Image
-                src="/founder/founder.png"
+                src="/founder/founder.jpg"
                 alt="Founder of Suklaamo"
                 width={1200}
                 height={1000}

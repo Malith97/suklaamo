@@ -9,41 +9,36 @@ const images = [
   '/products/img-02.webp',
   '/products/img-03.webp',
   '/products/img-04.webp',
-  '/products/img-05.webp',
   '/products/img-06.webp',
+  '/products/img-07.webp',
+  '/products/img-08.webp',
+  '/products/img-09.webp',
+  '/products/img-10.webp',
+  '/products/img-11.webp',
+  '/products/img-12.webp',
+  '/products/img-13.webp',
 ];
+
+const marqueeAnimation = {
+  x: ['0%', '-50%'],
+  transition: {
+    x: {
+      duration: 30,
+      ease: 'linear',
+      repeat: Infinity,
+    },
+  },
+};
 
 export default function PhotoMarquee() {
   const controls = useAnimationControls();
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    controls.start({
-      x: ['0%', '-50%'],
-      transition: {
-        x: {
-          duration: 30,
-          ease: 'linear',
-          repeat: Infinity,
-        },
-      },
-    });
-  }, [controls]);
-
-  useEffect(() => {
     if (isPaused) {
       controls.stop();
     } else {
-      controls.start({
-        x: ['0%', '-50%'],
-        transition: {
-          x: {
-            duration: 30,
-            ease: 'linear',
-            repeat: Infinity,
-          },
-        },
-      });
+      controls.start(marqueeAnimation);
     }
   }, [isPaused, controls]);
 
@@ -53,12 +48,14 @@ export default function PhotoMarquee() {
         className="group relative"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
       >
         <motion.div className="flex items-center gap-4 px-4 py-6" animate={controls}>
           {[...images, ...images].map((src, index) => (
             <motion.div
               key={`${src}-${index}`}
-              className="min-w-[260px] flex-shrink-0 overflow-hidden rounded-[2rem]"
+              className="relative h-[420px] min-w-[260px] flex-shrink-0 overflow-hidden rounded-[2rem]"
               whileHover={{ scale: 1.015 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
             >
@@ -67,7 +64,7 @@ export default function PhotoMarquee() {
                   alt={`Gallery image ${index + 1}`}
                   fill
                   sizes="(max-width: 640px) 100vw, 260px"
-                  wrapperClassName="h-[420px]"
+                  wrapperClassName="relative h-[420px] w-full"
                   imgClassName="object-cover"
                 />
             </motion.div>
