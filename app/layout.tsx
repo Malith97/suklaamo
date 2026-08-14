@@ -1,17 +1,34 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Fredoka, Inter } from 'next/font/google';
 import PromoTicker from '../components/PromoTicker';
+import Analytics from '../components/Analytics';
+import JsonLd from '../components/JsonLd';
+import {
+  buildLocalBusinessSchema,
+  buildWebsiteSchema,
+  SITE_DESCRIPTION,
+  SITE_TITLE_TEMPLATE,
+  SITE_DEFAULT_TITLE,
+  SITE_URL,
+} from '../lib/site';
 
 const fredoka = Fredoka({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-fredoka' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://suklaamo.fi'),
-  title: 'Suklaamo | Premium Finnish chocolate bakery in Oulu',
-  description:
-    'Suklaamo is a Finnish home bakery in Oulu crafting small-batch chocolate brownies, cookies and small cakes for local pickup and pre-order.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    template: SITE_TITLE_TEMPLATE,
+    default: SITE_DEFAULT_TITLE,
+  },
+  description: SITE_DESCRIPTION,
   keywords: [
     'Suklaamo',
     'Finnish bakery',
@@ -26,25 +43,38 @@ export const metadata: Metadata = {
     'brownies Oulu',
     'cakes Oulu',
     'cookies Oulu',
+    'chocolate cake',
+    'local pickup',
   ],
   openGraph: {
-    title: 'Suklaamo | Premium Finnish chocolate bakery in Oulu',
-    description:
-      'Handmade chocolate brownies and cakes from a Finnish home bakery in Oulu, ready for local pickup and pre-order.',
     type: 'website',
     siteName: 'Suklaamo',
-    images: [{ url: '/gallery/hero-2.webp', alt: 'Suklaamo chocolate treats' }],
+    locale: 'en_FI',
+    url: SITE_URL,
+    images: [
+      {
+        url: '/gallery/hero-2.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Suklaamo chocolate treats baked in Oulu, Finland',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Suklaamo | Premium Finnish chocolate bakery in Oulu',
-    description:
-      'Handmade chocolate brownies and cakes from a Finnish home bakery in Oulu, ready for local pickup and pre-order.',
+    site: '@suklaamoo',
+    creator: '@suklaamoo',
     images: ['/gallery/hero-2.webp'],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   icons: {
     icon: '/gallery/suklaamo.png',
@@ -53,58 +83,15 @@ export const metadata: Metadata = {
   },
 };
 
-const localBusinessStructuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'Bakery',
-  name: 'Suklaamo',
-  description:
-    'Suklaamo is a Finnish home bakery in Oulu making chocolate brownies, cookies and small cakes for pickup and pre-order.',
-  url: 'https://suklaamo.fi',
-  telephone: '+358-40-000-0000',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Peltolankaari 20',
-    addressLocality: 'Oulu',
-    postalCode: '90230',
-    addressCountry: 'FI',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 65.0457456,
-    longitude: 25.4319582,
-  },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Friday', 'Saturday', 'Sunday'],
-      opens: '16:00',
-      closes: '21:00',
-    },
-  ],
-  sameAs: ['https://instagram.com/suklaamoo'],
-};
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${fredoka.variable} ${inter.variable}`}>
-      <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-52E77WBZDT" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-52E77WBZDT');`,
-          }}
-        />
-      </head>
+    <html lang="en-FI" className={`${fredoka.variable} ${inter.variable}`}>
       <body suppressHydrationWarning className="pt-12 bg-background text-text-dark">
         <PromoTicker />
+        <Analytics />
+        <JsonLd data={buildLocalBusinessSchema()} />
+        <JsonLd data={buildWebsiteSchema()} />
         {children}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessStructuredData) }}
-        />
       </body>
     </html>
   );

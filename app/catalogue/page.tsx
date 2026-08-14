@@ -4,9 +4,11 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import SectionHeading from '../../components/SectionHeading';
 import CatalogueExpandableGrid from '../../components/catalogue-expandable-grid';
+import JsonLd from '../../components/JsonLd';
 import { products } from '../../data/products';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { buildBreadcrumbSchema } from '../../lib/site';
 
 const tabs = ['All', 'Cakes', 'Brownies', 'Cookies'];
 
@@ -38,7 +40,7 @@ export default function CataloguePage() {
       >
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
-            <SectionHeading title="Catalogue" subtitle="Chocolate-forward brownies, cookies and small cakes for pickup in Oulu." />
+            <SectionHeading as="h1" title="Catalogue" subtitle="Chocolate-forward brownies, cookies and small cakes for pickup in Oulu." />
             <p className="mt-4 max-w-4xl text-sm leading-7 text-text-muted">
               Browse the current kitchen selection. Fresh batches are made in the evening and available for local pickup the next day.
             </p>
@@ -83,6 +85,12 @@ export default function CataloguePage() {
         )}
       </motion.section>
 
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Catalogue', url: '/catalogue' },
+        ])}
+      />
       <Footer />
     </main>
   );

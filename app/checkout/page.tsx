@@ -7,6 +7,7 @@ import { ShoppingBag as ShoppingBagRaw } from 'iconoir-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Button from '../../components/Button';
+import JsonLd from '../../components/JsonLd';
 import { useCart } from '../../context/CartContext';
 import { validateEmail, validateFinnishPhone, validatePickupDate } from '../../lib/validators';
 
@@ -35,7 +36,7 @@ const policyContent: Record<PolicyKey, { title: string; sections: Array<{ headin
     sections: [
       {
         heading: '1. Who We Are (Data Controller)',
-        body: 'Suklaamo is a home bakery based in Oulu, Finland, operated by a small home baker, operating as a private individual if not yet registered]. Contact: Email suklaamo@gmail.com, Address Peltolankaari 20, 90230 Oulu, Finland.',
+        body: 'Suklaamo is a home bakery based in Oulu, Finland, operated by a small home baker, operating as a private individual if not yet registered]. Contact: Email info@suklaamo.fi, Address Peltolankaari 20, 90230 Oulu, Finland.',
       },
       {
         heading: '2. What Personal Data We Collect',
@@ -694,6 +695,46 @@ export default function CheckoutPage() {
         ) : null}
       </AnimatePresence>
 
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: "What if my item isn't available?",
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'We will contact you and provide alternatives or cancel the order.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'Can I cancel my order?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Orders may be cancelled before confirmation.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'Where do I pick up my order?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Peltolankaari 20, 90230 Oulu, Finland.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'When will I hear back?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'We typically respond within a few hours during operating days.',
+              },
+            },
+          ],
+        }}
+      />
       <Footer />
     </main>
   );

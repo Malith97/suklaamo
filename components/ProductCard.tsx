@@ -35,7 +35,7 @@ export default function ProductCard({
         <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.22, ease: 'easeOut' }} className="absolute inset-0">
           <SmartImage
             src={product.image}
-            alt={product.name}
+            alt={`${product.name} — Suklaamo chocolate treat, Oulu`}
             fill
             sizes="(max-width: 640px) 100vw, 33vw"
             wrapperClassName="h-full w-full"
@@ -53,7 +53,7 @@ export default function ProductCard({
           </div>
 
           <div className="space-y-2">
-            <h3 className="break-words text-xl font-bold text-primary">{product.name}</h3>
+            <h2 className="break-words text-xl font-bold text-primary">{product.name}</h2>
             <p className="break-words text-sm leading-6 text-text-muted line-clamp-3">{product.description}</p>
           </div>
 

@@ -1,10 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Instagram as InstagramRaw, Message as MessageRaw } from 'iconoir-react';
+import { Instagram as InstagramRaw, Message as MessageRaw, Phone as PhoneRaw } from 'iconoir-react';
 import { useState, type FormEvent, type ComponentType, type SVGProps } from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import JsonLd from '../../components/JsonLd';
+import { BUSINESS_TELEPHONE, buildBreadcrumbSchema } from '../../lib/site';
 
 const sectionFade = {
   hidden: { opacity: 0, y: 20 },
@@ -13,6 +15,7 @@ const sectionFade = {
 
 const Instagram = InstagramRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 const Message = MessageRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
+const Phone = PhoneRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 
 type ContactFormFields = {
   name: string;
@@ -66,7 +69,7 @@ export default function ContactPage() {
               Send your request through the form, Instagram, Whatsapp or email. We will reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.
             </p>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div className="mt-10 grid gap-6 sm:grid-cols-3">
               <div className="rounded-[2rem] bg-[#fff4dd] p-6 shadow-soft">
                 <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup location</p>
                 <p className="mt-2 text-sm leading-7 text-[#5a4030]">Peltolankaari 20, 90230, Oulu, Finland</p>
@@ -75,6 +78,18 @@ export default function ContactPage() {
                 <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup hours</p>
                 <p className="mt-2 text-sm leading-7 text-[#5a4030]">Fri 17:00–21:00 · Sat-Sunday 16:00–20:00</p>
               </div>
+              {BUSINESS_TELEPHONE ? (
+                <div className="rounded-[2rem] bg-[#fff4dd] p-6 shadow-soft">
+                  <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Phone</p>
+                  <a
+                    href={`tel:${BUSINESS_TELEPHONE.replace(/\s/g, '')}`}
+                    className="mt-2 flex items-center gap-2 text-sm font-semibold text-primary hover:text-accent-cocoa"
+                  >
+                    <Phone className="h-4 w-4" aria-hidden="true" />
+                    {BUSINESS_TELEPHONE}
+                  </a>
+                </div>
+              ) : null}
             </div>
 
             <div className="mt-10 rounded-[2rem] bg-[#fff8e8] p-8 shadow-soft">
@@ -170,7 +185,7 @@ export default function ContactPage() {
           <aside className="space-y-8 rounded-[3rem] bg-[#fff4dd] p-8 shadow-soft">
             <div>
               <p className="text-sm uppercase tracking-[0.35em] text-primary">Instagram</p>
-              <a href="https://instagram.com/suklaamoo" target="_blank" rel="noreferrer" className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-center text-sm font-semibold text-white hover:bg-[#2d180f]">
+              <a href="https://instagram.com/suklaamoo" target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-center text-sm font-semibold text-white hover:bg-[#2d180f]">
                 <Instagram className="h-4 w-4" aria-hidden="true" />
                 @suklaamoo
               </a>
@@ -189,6 +204,13 @@ export default function ContactPage() {
           </aside>
         </div>
       </motion.section>
+
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Contact', url: '/contact' },
+        ])}
+      />
       <Footer />
     </main>
   );

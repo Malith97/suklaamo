@@ -40,7 +40,7 @@ export default function SmartImage({
   const imageProps: Omit<ImageProps, 'alt'> = {
     src: hasError ? fallbackSrc : normalizedSrc,
     className: `relative h-full w-full min-w-0 ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 ${imgClassName}`,
-    onLoadingComplete: () => setIsLoaded(true),
+    onLoad: () => setIsLoaded(true),
     onError: () => {
       if (!hasError) {
         setHasError(true);

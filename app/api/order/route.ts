@@ -4,6 +4,7 @@ import { checkRateLimit } from '../../../lib/rate-limit';
 import {
   buildCustomerConfirmationEmailText,
   buildCustomerConfirmationEmailHtml,
+  buildOrderNotificationEmailHtml,
   buildOrderEmailText,
   calculateOrderTotalCents,
   formatEuro,
@@ -91,6 +92,19 @@ export async function POST(request: Request) {
     policyAccepted: values.policyAccepted,
     policyAcceptedAt,
   });
+  const html = buildOrderNotificationEmailHtml({
+    orderNumber,
+    name: values.name,
+    phone: values.phone,
+    email: values.email,
+    pickupDate: values.pickupDate,
+    notes: values.notes,
+    items: values.items,
+    orderTotal,
+    submittedAt,
+    policyAccepted: values.policyAccepted,
+    policyAcceptedAt,
+  });
 
   const recipientResults = await Promise.all(
     uniqueRecipients.map(async (recipient) => {
@@ -100,6 +114,7 @@ export async function POST(request: Request) {
         to: recipient,
         subject,
         text,
+        html,
       });
 
       if (!result.ok) {

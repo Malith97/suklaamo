@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BUSINESS_TELEPHONE } from '../lib/site';
 
 const links = [
   { label: 'Home', href: '/' },
@@ -13,11 +14,19 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 text-sm text-text-dark md:flex-row md:items-center md:justify-between md:px-8">
         <div className="space-y-2">
           <p className="text-lg font-bold uppercase tracking-[0.35em] text-primary">Suklaamo</p>
-          <p className="max-w-xl text-sm text-[#4d3a2d]">A warm Finnish home bakery making brownies, cookies, and small cakes with chocolate first.</p>
+          <p className="max-w-xl text-sm text-[#4d3a2d]">A warm Finnish home bakery making brownies, cookies, and small cakes with chocolate first. Pickup in Oulu, Finland.</p>
+          {BUSINESS_TELEPHONE ? (
+            <p className="pt-1 text-sm text-[#4d3a2d]">
+              <span className="font-semibold">Phone:</span>{' '}
+              <a href={`tel:${BUSINESS_TELEPHONE.replace(/\s/g, '')}`} className="text-primary hover:text-accent-cocoa">
+                {BUSINESS_TELEPHONE}
+              </a>
+            </p>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-3 text-[#4d3a2d] md:items-end">
-          <Link href="https://instagram.com/suklaamoo" target="_blank" rel="noreferrer" className="font-semibold text-primary">
+          <Link href="https://instagram.com/suklaamoo" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary">
             @suklaamoo
           </Link>
           <p>© {new Date().getFullYear()} Suklaamo. All rights reserved.</p>

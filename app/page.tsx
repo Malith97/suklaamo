@@ -13,7 +13,10 @@ import SmartImage from '../components/SmartImage';
 import { products } from '../data/products';
 
 const featured = products[0];
-const heroSlides = products.slice(0, 4).map((product) => product.image);
+const heroSlides = products.slice(0, 4).map((product) => ({
+  src: product.image,
+  alt: `${product.name} — Suklaamo chocolate bakery in Oulu`,
+}));
 const heroSlideDurations = [4200, 5000, 5400, 4600];
 const stats = [
   { value: '24', label: 'Orders Fulfilled' },
@@ -107,17 +110,17 @@ export default function Home() {
               Warm batch
             </div>
             <div className="relative aspect-[4/3] min-h-[320px] overflow-hidden sm:min-h-[420px]">
-              {heroSlides.map((src, index) => (
+              {heroSlides.map((slide, index) => (
                 <motion.div
-                  key={src}
+                  key={slide.src}
                   className="absolute inset-0"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: index === heroIndex ? 1 : 0 }}
                   transition={{ duration: 0.8, ease: 'easeInOut' }}
                 >
                   <SmartImage
-                    src={src}
-                    alt="Chocolate bakery product showcase"
+                    src={slide.src}
+                    alt={slide.alt}
                     fill
                     priority={index === 0}
                     sizes="100vw"
@@ -157,7 +160,7 @@ export default function Home() {
         <motion.div className="grid gap-6 lg:grid-cols-3" variants={staggers} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
           {products.slice(0, 3).map((item) => (
             <motion.div key={item.id} variants={cardReveal} whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 260, damping: 24, duration: 0.22 }}>
-              <ProductCard product={item} href="/catalogue" />
+              <ProductCard product={item} href={`/catalogue/${item.slug}`} />
             </motion.div>
           ))}
         </motion.div>
@@ -177,7 +180,8 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-br from-accent-cocoa/20 via-transparent to-accent-berry/10 opacity-90" />
               <SmartImage
               src="/products/img-03.webp"
-              alt="Death by Chocolate cake"
+
+              alt="Death by Chocolate layer cake — Suklaamo bakery Oulu"
               fill
               sizes="(max-width: 768px) 100vw, 45vw"
               wrapperClassName="aspect-[4/5] sm:aspect-[5/6]"
@@ -291,7 +295,7 @@ export default function Home() {
             <div className="overflow-hidden rounded-[2.5rem] bg-white">
               <SmartImage
               src="/products/img-05.webp"
-              alt="Assorted baking treats"
+              alt="Assorted Suklaamo chocolate treats on a wooden table"
               fill
               sizes="100vw"
               wrapperClassName="h-[280px] sm:h-[360px]"
@@ -302,7 +306,7 @@ export default function Home() {
               <div className="overflow-hidden rounded-[2.5rem] bg-[#fff4df]">
                 <SmartImage
                   src="/products/img-02.webp"
-                  alt="Chocolate cookies"
+                  alt="Chocolate cookies — Suklaamo home-baked treat, Oulu"
                   fill
                   sizes="(max-width: 640px) 100vw, 45vw"
                   wrapperClassName="h-[180px]"
@@ -311,8 +315,8 @@ export default function Home() {
               </div>
               <div className="overflow-hidden rounded-[2.5rem] bg-[#f1e7dd]">
                 <SmartImage
-                  src="/products/img-03.webp"
-                  alt="Chocolate brownie tray"
+                  src="/products/img-04.webp"
+                  alt="Fudgy chocolate brownies — Suklaamo bakery Oulu"
                   fill
                   sizes="(max-width: 640px) 100vw, 45vw"
                   wrapperClassName="h-[180px]"

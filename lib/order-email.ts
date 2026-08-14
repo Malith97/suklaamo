@@ -305,6 +305,75 @@ function infoCard(title: string, body: string) {
   `;
 }
 
+export function buildOrderNotificationEmailHtml(payload: OrderEmailPayload) {
+  const productRows = payload.items.map(formatProductLineHtml).join('');
+
+  return `
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="color-scheme" content="light only" />
+      <meta name="supported-color-schemes" content="light only" />
+      <title>New Suklaamo Order</title>
+    </head>
+    <body style="margin:0;padding:0;background:#f6ecdf;">
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
+        New Suklaamo order ${escapeHtml(payload.orderNumber)} from ${escapeHtml(payload.name)}.
+      </div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:#f6ecdf;width:100%;">
+        <tr>
+          <td align="center" style="padding:28px 14px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:680px;border-collapse:separate;">
+              <tr>
+                <td style="background:#2b1810;background-image:linear-gradient(135deg,#2b1810 0%,#3a2317 100%);border-radius:30px 30px 0 0;padding:26px 28px 22px 28px;text-align:center;">
+                  <div style="display:inline-block;background:rgba(232,163,61,0.14);border:1px solid rgba(232,163,61,0.28);border-radius:999px;padding:8px 16px;margin-bottom:14px;">
+                    <span style="font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:11px;letter-spacing:0.28em;text-transform:uppercase;color:#e8a33d;font-weight:700;">Chocolate Bakery</span>
+                  </div>
+                  <h1 style="margin:0;color:#ffffff;font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:38px;font-weight:700;">New Suklaamo Order</h1>
+                  <p style="margin:10px 0 0 0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;">Order ${escapeHtml(payload.orderNumber)} needs your review.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:#fffaf3;padding:22px 18px 6px 18px;border-left:1px solid #eadfce;border-right:1px solid #eadfce;">
+                  ${infoCard('Order Details', `
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                      <tr><td style="padding:0 0 9px 0;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">Customer</td><td style="padding:0 0 9px 0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;text-align:right;">${escapeHtml(payload.name)}</td></tr>
+                      <tr><td style="padding:0 0 9px 0;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">Phone</td><td style="padding:0 0 9px 0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;text-align:right;">${escapeHtml(payload.phone)}</td></tr>
+                      <tr><td style="padding:0 0 9px 0;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">Email</td><td style="padding:0 0 9px 0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;text-align:right;">${escapeHtml(payload.email)}</td></tr>
+                      <tr><td style="padding:0;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">Pickup Date</td><td style="padding:0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;text-align:right;">${escapeHtml(payload.pickupDate)}</td></tr>
+                    </table>
+                    <div style="margin-top:16px;border-top:1px solid #eadfce;padding-top:14px;">
+                      <p style="margin:0 0 8px 0;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">Products</p>
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${productRows}</table>
+                    </div>
+                    <div style="margin-top:14px;background:#2b1810;border-radius:18px;padding:15px 18px 14px 18px;">
+                      <p style="margin:0 0 4px 0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Total</p>
+                      <p style="margin:0;color:#ffffff;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:32px;font-weight:700;">${escapeHtml(payload.orderTotal)}</p>
+                    </div>
+                    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #eadfce;">
+                      <p style="margin:0 0 6px 0;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">Notes</p>
+                      <p style="margin:0;color:#3a2317;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;white-space:pre-line;">${escapeHtml(payload.notes || 'No notes provided.')}</p>
+                    </div>
+                  `)}
+                  <p style="margin:0 4px 16px;color:#8f6a43;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;">Submitted ${escapeHtml(payload.submittedAt)} · Policy ${payload.policyAccepted ? 'accepted' : 'not accepted'} at ${escapeHtml(payload.policyAcceptedAt)}</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:#2b1810;border-radius:0 0 30px 30px;padding:20px 28px 22px 28px;text-align:center;border-left:1px solid #eadfce;border-right:1px solid #eadfce;border-bottom:1px solid #eadfce;">
+                  <p style="margin:0;color:#eadfce;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;">Suklaamo · New order notification</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+  </html>
+  `;
+}
+
 export function buildCustomerConfirmationEmailHtml(payload: OrderEmailPayload) {
   const productRows = payload.items.map(formatProductLineHtml).join('');
 

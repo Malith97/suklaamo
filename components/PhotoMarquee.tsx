@@ -61,7 +61,7 @@ export default function PhotoMarquee() {
             >
                 <SmartImage
                   src={src}
-                  alt={`Gallery image ${index + 1}`}
+                  alt="Handmade Suklaamo chocolate treat — bakery gallery photo"
                   fill
                   sizes="(max-width: 640px) 100vw, 260px"
                   wrapperClassName="relative h-[420px] w-full"

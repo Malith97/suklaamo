@@ -61,7 +61,7 @@ export default function CartPage() {
                               <div className="relative overflow-hidden rounded-[2rem] bg-[#f8efe0]">
                                 <SmartImage
                                   src={item.product.image}
-                                  alt={item.product.name}
+                                  alt={`${item.product.name} — Suklaamo chocolate treat`}
                                   width={320}
                                   height={240}
                                   imgClassName="h-full w-full object-cover"

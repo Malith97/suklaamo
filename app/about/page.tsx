@@ -1,8 +1,33 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import type { Metadata } from 'next';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SectionHeading from '../../components/SectionHeading';
 import PhotoMarquee from '../../components/PhotoMarquee';
+import JsonLd from '../../components/JsonLd';
+import { buildBreadcrumbSchema } from '../../lib/site';
+
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    "Meet the baker behind Suklaamo, a chocolate home bakery in Oulu, Finland. Small-batch brownies, cookies and cakes made with good chocolate and care for local pickup.",
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About | Suklaamo — Chocolate Bakery in Oulu',
+    description:
+      "Meet the baker behind Suklaamo, a chocolate home bakery in Oulu, Finland. Small-batch brownies, cookies and cakes made with good chocolate and care.",
+    images: [{ url: '/gallery/hero-2.webp', alt: 'Suklaamo chocolate treats baked in Oulu, Finland' }],
+  },
+  twitter: {
+    title: 'About | Suklaamo — Chocolate Bakery in Oulu',
+    description:
+      "Meet the baker behind Suklaamo, a chocolate home bakery in Oulu, Finland. Small-batch brownies, cookies and cakes made with good chocolate and care.",
+    images: ['/gallery/hero-2.webp'],
+  },
+};
 
 const kitchenValues = [
   {
@@ -19,7 +44,7 @@ const kitchenValues = [
   },
   {
     title: 'Made locally',
-    description: 'Every treat is baked in Oulu. I want this to feel like a neighbourhood kitchen.',
+    description:     'Every treat is baked in Oulu, Finland. I want this to feel like a neighbourhood kitchen.',
   },
 ];
 
@@ -34,7 +59,7 @@ export default function AboutPage() {
             <div className="h-[500px] w-full overflow-hidden rounded-[2.5rem] sm:h-[600px] lg:h-[700px]">
               <Image
                 src="/founder/founder.jpg"
-                alt="Founder of Suklaamo"
+                alt="The baker at Suklaamo's home kitchen in Oulu, Finland"
                 width={1200}
                 height={1000}
                 priority
@@ -137,6 +162,15 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <div className="mt-4 flex justify-center">
+          <Link
+            href="/catalogue"
+            className="inline-flex rounded-full bg-accent-gold px-7 py-3 text-sm font-semibold text-primary shadow-soft transition hover:bg-[#d59b38]"
+          >
+            Browse the full catalogue
+          </Link>
+        </div>
+
         <section>
           <SectionHeading title="Photo gallery" subtitle="A rolling view of the kitchen and treats." />
           <div className="mt-8">
@@ -145,6 +179,12 @@ export default function AboutPage() {
         </section>
       </section>
 
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'About', url: '/about' },
+        ])}
+      />
       <Footer />
     </main>
   );

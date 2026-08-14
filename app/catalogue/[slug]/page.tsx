@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import SmartImage from '../../../components/SmartImage';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
@@ -7,7 +8,9 @@ import Badge from '../../../components/Badge';
 import SectionHeading from '../../../components/SectionHeading';
 import ProductCard from '../../../components/ProductCard';
 import ProductPurchaseActions from '../../../components/ProductPurchaseActions';
-import { products } from '../../../data/products';
+import JsonLd from '../../../components/JsonLd';
+import { products, type Product } from '../../../data/products';
+import { SITE_URL, buildBreadcrumbSchema } from '../../../lib/site';
 
 type PageProps = {
   params: Promise<{
@@ -17,6 +20,37 @@ type PageProps = {
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = products.find((item) => item.slug === slug);
+
+  if (!product) {
+    return {
+      title: 'Product not found',
+      description: 'The product you are looking for could not be found.',
+    };
+  }
+
+  return {
+    title: product.name,
+    description: `${product.description} Made fresh in Oulu, Finland. Local pickup available.`,
+    alternates: {
+      canonical: `/catalogue/${product.slug}`,
+    },
+    openGraph: {
+      title: `${product.name} | Suklaamo — Chocolate Bakery Oulu`,
+      description: `${product.description} Made fresh in Oulu, Finland. Local pickup available.`,
+      url: `${SITE_URL}/catalogue/${product.slug}`,
+      images: [{ url: product.image, alt: `${product.name} — Suklaamo chocolate bakery Oulu` }],
+    },
+    twitter: {
+      title: `${product.name} | Suklaamo — Chocolate Bakery Oulu`,
+      description: `${product.description} Made fresh in Oulu, Finland. Local pickup available.`,
+      images: [product.image],
+    },
+  };
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
@@ -34,13 +68,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
       <section className="container mx-auto py-16">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.9fr] lg:items-start">
           <div className="space-y-6">
-            <SectionHeading title={product.name} subtitle={product.description} />
+            <SectionHeading as="h1" title={product.name} subtitle={product.description} />
 
             <div className="rounded-[2.5rem] bg-surface p-6 shadow-card">
               <div className="relative h-[420px] overflow-hidden rounded-[2rem] bg-[#f7e1cc] sm:h-[520px]">
                 <SmartImage
                   src={product.image}
-                  alt={product.name}
+                  alt={`${product.name} — Suklaamo home-baked chocolate treat, Oulu`}
                   fill
                   sizes="100vw"
                   wrapperClassName="h-full w-full"
@@ -149,7 +183,41 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      <JsonLd
+        data={buildProductSchema(product)}
+      />
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Catalogue', url: '/catalogue' },
+          { name: product.name, url: `/catalogue/${product.slug}` },
+        ])}
+      />
+
       <Footer />
     </main>
   );
+}
+
+function buildProductSchema(product: Product) {
+  const productPrice = Number(product.price.replace(/[^\d]/g, ''));
+
+  return {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: `${SITE_URL}${product.image}`,
+    sku: product.id,
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE_URL}/catalogue/${product.slug}`,
+      priceCurrency: 'EUR',
+      price: productPrice,
+      priceDisplay: product.price,
+      availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/MadeToOrder',
+      validFrom: new Date().toISOString().split('T')[0],
+    },
+  };
 }
