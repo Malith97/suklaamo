@@ -75,7 +75,7 @@ export default function AboutPage() {
               A home baker who loves chocolate, coffee and the people who share the treats.
             </h1>
             <p className="max-w-3xl text-base leading-8 text-[#5a4030] sm:text-lg">
-              I started baking because I wanted one more sweet thing after a long day. It turned into a habit: good chocolate, a quiet kitchen and the joy of making something for someone else.
+              I started baking because I wanted one more sweet thing after a long day. It turned into a habit. good chocolate, a quiet kitchen and the joy of making something for someone else.
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-[2rem] bg-white p-6 shadow-soft">
@@ -142,9 +142,9 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="rounded-[3rem] bg-[#f4e2d0] p-10 shadow-soft transition-transform duration-300 hover:-translate-y-0.5">
-              <p className="text-sm uppercase tracking-[0.35em] text-accent-cocoa">Founder quote</p>
-              <p className="mt-6 text-3xl font-black leading-tight text-primary sm:text-4xl">
-                “I bake for the quiet mornings, the small celebrations and the people who choose a treat made with care.”
+              {/* <p className="text-sm uppercase tracking-[0.35em] text-accent-cocoa">Founder quote</p> */}
+              <p className="mt-2 text-3xl font-black leading-tight text-primary sm:text-4xl">
+                “Baking is my love language. There is no greater joy than sharing a yummy homemade treat fresh from my kitchen, with my loved ones.”
               </p>
             </div>
           </div>
