@@ -9,6 +9,8 @@ import { products } from '../../data/products';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { buildBreadcrumbSchema } from '../../lib/site';
+import { getLocalizedProducts } from '../../lib/i18n';
+import { useLocale } from '../../context/LocaleContext';
 
 const tabs = ['All', 'Cakes', 'Brownies', 'Cookies'];
 
@@ -19,13 +21,15 @@ const fadeSection = {
 
 export default function CataloguePage() {
   const [activeTab, setActiveTab] = useState('All');
+  const { locale, t } = useLocale();
+  const localizedProducts = getLocalizedProducts(products, locale);
 
   const filteredProducts = useMemo(
     () =>
       activeTab === 'All'
-        ? products
-        : products.filter((product) => product.category.toLowerCase() === activeTab.toLowerCase()),
-    [activeTab],
+        ? localizedProducts
+        : localizedProducts.filter((product) => product.category.toLowerCase() === activeTab.toLowerCase()),
+      [activeTab, localizedProducts],
   );
 
   return (
@@ -40,21 +44,21 @@ export default function CataloguePage() {
       >
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
-            <SectionHeading as="h1" title="Catalogue" subtitle="Chocolate-forward brownies, cookies and small cakes for pickup in Oulu." />
+            <SectionHeading as="h1" title={locale === 'fi' ? 'Valikoima' : 'Catalogue'} subtitle={locale === 'fi' ? 'Suklaisia brownieita, keksejä ja pieniä kakkuja noudettavaksi Oulussa.' : 'Chocolate-forward brownies, cookies and small cakes for pickup in Oulu.'} />
             <p className="mt-4 max-w-4xl text-sm leading-7 text-text-muted">
-              Browse the current kitchen selection. Fresh batches are made in the evening and available for local pickup the next day.
+              {locale === 'fi' ? 'Selaa tämänhetkistä keittiön valikoimaa. Tuoreet erät valmistetaan illalla ja ovat noudettavissa paikallisesti seuraavana päivänä.' : 'Browse the current kitchen selection. Fresh batches are made in the evening and available for local pickup the next day.'}
             </p>
           </div>
           <div className="rounded-[2rem] bg-surface p-6 shadow-soft">
-            <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order tip</p>
+            <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{locale === 'fi' ? 'Tilausvinkki' : 'Order tip'}</p>
             <p className="mt-2 text-sm leading-7 text-text-muted">
-              Reserve before Thursday 18:00 for friday and weekend collection. Popular items sell out fast.
+              {locale === 'fi' ? 'Varaa tilaus ennen torstaita klo 18.00 perjantain ja viikonlopun noutoa varten. Suosituimmat tuotteet loppuvat nopeasti.' : 'Reserve before Thursday 18:00 for friday and weekend collection. Popular items sell out fast.'}
             </p>
           </div>
         </div>
 
         <div className="mt-6 rounded-[2rem] bg-[#fff4df] p-5 text-sm text-black leading-7 shadow-soft">
-          <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Reserve your order before Thursday 18:00 for Weekend pickup</p>
+          <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{locale === 'fi' ? 'Varaa tilauksesi ennen torstaita klo 18.00 viikonlopun noutoa varten' : 'Reserve your order before Thursday 18:00 for Weekend pickup'}</p>
         </div>
 
         <div className="mt-10 flex flex-wrap gap-3">
@@ -70,15 +74,15 @@ export default function CataloguePage() {
               }`}
               aria-pressed={activeTab === tab}
             >
-              {tab}
+              {locale === 'fi' ? { All: 'Kaikki', Cakes: 'Kakut', Brownies: 'Browniet', Cookies: 'Keksit' }[tab] : tab}
             </button>
           ))}
         </div>
 
         {filteredProducts.length === 0 ? (
           <motion.div className="mt-14 rounded-[2rem] bg-white p-10 text-center shadow-soft" variants={fadeSection}>
-            <p className="text-lg font-semibold text-primary">Nothing matches that category yet.</p>
-            <p className="mt-3 text-sm leading-7 text-text-muted">Try another category or check back soon for the next bakery release.</p>
+            <p className="text-lg font-semibold text-primary">{locale === 'fi' ? 'Tähän kategoriaan ei vielä löydy tuotteita.' : 'Nothing matches that category yet.'}</p>
+            <p className="mt-3 text-sm leading-7 text-text-muted">{locale === 'fi' ? 'Kokeile toista kategoriaa tai palaa pian seuraavan leipomoerän aikaan.' : 'Try another category or check back soon for the next bakery release.'}</p>
           </motion.div>
         ) : (
           <CatalogueExpandableGrid products={filteredProducts} />

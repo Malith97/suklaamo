@@ -7,6 +7,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import JsonLd from '../../components/JsonLd';
 import { BUSINESS_TELEPHONE, buildBreadcrumbSchema } from '../../lib/site';
+import { useLocale } from '../../context/LocaleContext';
 
 const sectionFade = {
   hidden: { opacity: 0, y: 20 },
@@ -28,6 +29,8 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<Partial<ContactFormFields>>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [serverError, setServerError] = useState<string | null>(null);
+  const { locale } = useLocale();
+  const fi = locale === 'fi';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,7 +50,7 @@ export default function ContactPage() {
       if (result.errors) {
         setErrors(result.errors);
       } else {
-        setServerError(result.error || 'Unable to send your message. Please try again later.');
+        setServerError(result.error || (fi ? 'Viestin lähettäminen ei onnistunut. Yritä myöhemmin uudelleen.' : 'Unable to send your message. Please try again later.'));
       }
       setStatus('error');
       return;
@@ -63,24 +66,24 @@ export default function ContactPage() {
       <motion.section className="container mx-auto py-16" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionFade}>
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[3rem] bg-white p-8 shadow-soft sm:p-10">
-            <p className="text-sm uppercase tracking-[0.35em] text-primary">Get in touch</p>
-            <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">Reserve your handcrafted chocolate treats for pickup in Oulu.</h1>
+            <p className="text-sm uppercase tracking-[0.35em] text-primary">{fi ? 'Ota yhteyttä' : 'Get in touch'}</p>
+            <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">{fi ? 'Varaa käsintehdyt suklaaherkkusi noudettavaksi Oulussa.' : 'Reserve your handcrafted chocolate treats for pickup in Oulu.'}</h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-[#5a4030] sm:text-base">
-              Send your request through the form, Instagram, Whatsapp or email. We will reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.
+              {fi ? 'Lähetä pyyntö lomakkeella, Instagramissa, WhatsAppissa tai sähköpostilla. Vastaamme nopeasti ja autamme varaamaan noutoajan kotikeittiömme tuoreille leivonnaisille.' : 'Send your request through the form, Instagram, Whatsapp or email. We will reply quickly and help you reserve a pickup slot for fresh baked goods from our home kitchen.'}
             </p>
 
             <div className="mt-10 grid gap-6 sm:grid-cols-3">
               <div className="rounded-[2rem] bg-[#fff4dd] p-6 shadow-soft">
-                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup location</p>
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Noutopaikka' : 'Pickup location'}</p>
                 <p className="mt-2 text-sm leading-7 text-[#5a4030]">Peltolankaari 20, 90230, Oulu, Finland</p>
               </div>
               <div className="rounded-[2rem] bg-[#fff4dd] p-6 shadow-soft">
-                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup hours</p>
-                <p className="mt-2 text-sm leading-7 text-[#5a4030]">Fri 17:00–21:00 · Sat-Sunday 16:00–20:00</p>
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Noutoajat' : 'Pickup hours'}</p>
+                <p className="mt-2 text-sm leading-7 text-[#5a4030]">{fi ? 'Pe 17.00–21.00 · La–su 16.00–20.00' : 'Fri 17:00–21:00 · Sat-Sunday 16:00–20:00'}</p>
               </div>
               {BUSINESS_TELEPHONE ? (
                 <div className="rounded-[2rem] bg-[#fff4dd] p-6 shadow-soft">
-                  <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Phone</p>
+                  <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Puhelin' : 'Phone'}</p>
                   <a
                     href={`tel:${BUSINESS_TELEPHONE.replace(/\s/g, '')}`}
                     className="mt-2 flex items-center gap-2 text-sm font-semibold text-primary hover:text-accent-cocoa"
@@ -93,9 +96,9 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-10 rounded-[2rem] bg-[#fff8e8] p-8 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Custom Orders and Enquiries</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Erikoistilaukset ja tiedustelut' : 'Custom Orders and Enquiries'}</p>
               <p className="mt-2 text-sm leading-7 text-[#5a4030]">
-                Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We will get back to you as soon as possible to discuss your requirements and available pickup dates.
+                {fi ? 'Käytä alla olevaa lomaketta erikoiskakkuihin, juhlatilauksiin, suuriin määriin, ruokavaliopyyntöihin tai yleisiin kysymyksiin. Palaamme asiaan mahdollisimman pian.' : 'Use the form below for custom cakes, celebration orders, large quantities, dietary requests, or general questions. We will get back to you as soon as possible to discuss your requirements and available pickup dates.'}
               </p>
               <a href="mailto:info@suklaamo.fi" className="mt-4 inline-flex items-center rounded-full bg-[#fff1d6] px-4 py-2 text-sm font-semibold text-primary hover:bg-[#ffe5b3]">
                 info@suklaamo.fi
@@ -107,7 +110,7 @@ export default function ContactPage() {
                 <div className="grid gap-6 sm:grid-cols-2">
                   <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                      Name
+                      {fi ? 'Nimi' : 'Name'}
                     </span>
                     <input
                       name="name"
@@ -123,7 +126,7 @@ export default function ContactPage() {
                   </label>
                   <label className="group relative block overflow-hidden rounded-[1rem] border border-border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                      Email
+                      {fi ? 'Sähköposti' : 'Email'}
                     </span>
                     <input
                       name="email"
@@ -153,7 +156,7 @@ export default function ContactPage() {
                 */}
                 <label className="group relative block rounded-[1rem] border border-border bg-[#fbf7f0] text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
                   <span className="block px-4 pt-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                    What do you want?
+                    {fi ? 'Mitä haluaisit?' : 'What do you want?'}
                   </span>
                   <textarea
                     name="message"
@@ -169,14 +172,14 @@ export default function ContactPage() {
                 </label>
 
                 {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}
-                {status === 'success' ? <p className="text-sm text-green-600">Your request has been sent. I will respond shortly.</p> : null}
+                {status === 'success' ? <p className="text-sm text-green-600">{fi ? 'Pyyntösi on lähetetty. Vastaan pian.' : 'Your request has been sent. I will respond shortly.'}</p> : null}
                 <button
                   type="submit"
                   disabled={status === 'submitting'}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-[#d38a24] focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   <Message className="h-4 w-4" aria-hidden="true" />
-                  {status === 'submitting' ? 'Sending...' : 'Send request'}
+                  {status === 'submitting' ? (fi ? 'Lähetetään...' : 'Sending...') : (fi ? 'Lähetä pyyntö' : 'Send request')}
                 </button>
               </form>
             </div>
@@ -191,10 +194,10 @@ export default function ContactPage() {
               </a>
             </div>
             <div className="rounded-[2.5rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Find us</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{fi ? 'Löydä meidät' : 'Find us'}</p>
               <div className="mt-4 overflow-hidden rounded-[2rem] border border-[#d9c8b1] bg-[#f1e2c9]">
                 <iframe
-                  title="Suklaamo pickup location"
+                  title={fi ? 'Suklaamon noutopaikka' : 'Suklaamo pickup location'}
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21517.972752192845!2d25.431958163381226!3d65.0457456324772!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46800d238d2fe471%3A0x274d1d3b24f35dfd!2sPeltolankaari%2020%2C%2090230%20Oulu%2C%20Finland!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
                   className="h-72 w-full border-0"
                   loading="lazy"

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { Product } from '../data/products';
 import ProductCard from './ProductCard';
 import { MAX_CART_QUANTITY, MAX_CART_QUANTITY_MESSAGE, useCart } from '../context/CartContext';
+import { useLocale } from '../context/LocaleContext';
 
 type ToastState = {
   kind: 'success' | 'error';
@@ -13,6 +14,7 @@ type ToastState = {
 
 export default function CatalogueExpandableGrid({ products }: { products: Product[] }) {
   const { addItem, itemCount } = useCart();
+  const { locale, t } = useLocale();
   const [toast, setToast] = useState<ToastState | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
@@ -39,8 +41,8 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
     const result = addItem(product);
     setToast(
       result.success
-        ? { kind: 'success', message: `${product.name} added to cart.` }
-        : { kind: 'error', message: result.message },
+        ? { kind: 'success', message: `${product.name} ${locale === 'fi' ? 'lisättiin ostoskoriin.' : 'added to cart.'}` }
+        : { kind: 'error', message: locale === 'fi' ? 'Tilausraja on 10 tuotetta. Ota yhteyttä suuremmista tilauksista.' : result.message },
     );
     clearToast();
   };
@@ -57,7 +59,7 @@ export default function CatalogueExpandableGrid({ products }: { products: Produc
             href={`/catalogue/${product.slug}`}
             onAddToCart={() => handleAddToCart(product)}
             addToCartDisabled={addToCartDisabled}
-            addToCartDisabledLabel={MAX_CART_QUANTITY_MESSAGE}
+            addToCartDisabledLabel={locale === 'fi' ? 'Tilausraja on 10 tuotetta. Ota yhteyttä suuremmista tilauksista.' : MAX_CART_QUANTITY_MESSAGE}
           />
         ))}
       </div>

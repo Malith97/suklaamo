@@ -1,6 +1,7 @@
+ 'use client';
+
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
+import { useParams } from 'next/navigation';
 import SmartImage from '../../../components/SmartImage';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
@@ -11,56 +12,17 @@ import ProductPurchaseActions from '../../../components/ProductPurchaseActions';
 import JsonLd from '../../../components/JsonLd';
 import { products, type Product } from '../../../data/products';
 import { SITE_URL, buildBreadcrumbSchema } from '../../../lib/site';
+import { getLocalizedProduct } from '../../../lib/i18n';
+import { useLocale } from '../../../context/LocaleContext';
 
-type PageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
-};
+export default function ProductDetailPage() {
+  const { locale, t } = useLocale();
+  const { slug } = useParams<{ slug: string }>();
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
-}
+  const rawProduct = products.find((item) => item.slug === slug);
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
-
-  if (!product) {
-    return {
-      title: 'Product not found',
-      description: 'The product you are looking for could not be found.',
-    };
-  }
-
-  return {
-    title: product.name,
-    description: `${product.description} Made fresh in Oulu, Finland. Local pickup available.`,
-    alternates: {
-      canonical: `/catalogue/${product.slug}`,
-    },
-    openGraph: {
-      title: `${product.name} | Suklaamo — Chocolate Bakery Oulu`,
-      description: `${product.description} Made fresh in Oulu, Finland. Local pickup available.`,
-      url: `${SITE_URL}/catalogue/${product.slug}`,
-      images: [{ url: product.image, alt: `${product.name} — Suklaamo chocolate bakery Oulu` }],
-    },
-    twitter: {
-      title: `${product.name} | Suklaamo — Chocolate Bakery Oulu`,
-      description: `${product.description} Made fresh in Oulu, Finland. Local pickup available.`,
-      images: [product.image],
-    },
-  };
-}
-
-export default async function ProductDetailPage({ params }: PageProps) {
-  const { slug } = await params;
-
-  const product = products.find((item) => item.slug === slug);
-
-  if (!product) {
-    notFound();
-  }
+  if (!rawProduct) return null;
+  const product = getLocalizedProduct(rawProduct, locale);
 
   return (
     <main className="min-h-screen bg-background text-text-dark">
@@ -111,9 +73,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           <aside className="space-y-6 rounded-[2.5rem] bg-surface p-8 shadow-card">
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Order</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{t.common.order}</p>
               <p className="mt-4 leading-7 text-text-muted">
-                Pre-order with pickup only. Send your request through checkout and I will confirm your pickup window.
+                {locale === 'fi' ? 'Ennakkotilaus vain noudolla. Lähetä pyyntösi kassalla, niin vahvistan noutoaikasi.' : 'Pre-order with pickup only. Send your request through checkout and I will confirm your pickup window.'}
               </p>
             </div>
 
@@ -130,25 +92,25 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     product.inStock ? 'bg-[#FFE7C1] text-primary' : 'bg-[#F8E8D7] text-text-muted'
                   }`}
                 >
-                  {product.inStock ? 'Fresh batch' : 'Made to order'}
+                  {product.inStock ? t.common.freshBatch : t.common.madeToOrder}
                 </p>
               </div>
               <div className="mt-6 space-y-4 text-sm leading-7 text-text-muted">
                 <p>{product.description}</p>
                 <div>
-                  <p className="text-sm font-semibold text-primary">Ingredients</p>
+                  <p className="text-sm font-semibold text-primary">{t.common.ingredients}</p>
                   <p className="mt-2">{product.ingredients.join(', ')}</p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Product details</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{t.common.productDetails}</p>
               <div className="mt-4 space-y-4 text-sm leading-7 text-text-muted">
-                <p><span className="font-semibold text-text-dark">Serving size:</span> {product.servingSize}</p>
-                <p><span className="font-semibold text-text-dark">Weight:</span> {product.weight}</p>
-                <p><span className="font-semibold text-text-dark">Lead time:</span> {product.leadTime}</p>
-                <p><span className="font-semibold text-text-dark">Allergens:</span> {product.allergenInformation}</p>
+                <p><span className="font-semibold text-text-dark">{locale === 'fi' ? 'Annoskoko:' : 'Serving size:'}</span> {product.servingSize}</p>
+                <p><span className="font-semibold text-text-dark">{locale === 'fi' ? 'Paino:' : 'Weight:'}</span> {product.weight}</p>
+                <p><span className="font-semibold text-text-dark">{locale === 'fi' ? 'Tilausaika:' : 'Lead time:'}</span> {product.leadTime}</p>
+                <p><span className="font-semibold text-text-dark">{locale === 'fi' ? 'Allergeenit:' : 'Allergens:'}</span> {product.allergenInformation}</p>
               </div>
             </div>
 
@@ -158,12 +120,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
               href="/catalogue"
               className="inline-flex w-full items-center justify-center rounded-full border border-border bg-white px-6 py-3 text-sm font-semibold text-primary hover:bg-[#fff5df]"
             >
-              Back to catalogue
+              {t.common.backToCatalogue}
             </Link>
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Pickup details</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{t.common.pickupDetails}</p>
               <p className="mt-3 text-sm leading-7 text-text-muted">
-                Peltolankaari 20, 90230 Oulu. Fresh orders are ready for collection during the next available pickup window.
+                {locale === 'fi' ? 'Peltolankaari 20, 90230 Oulu. Tuoreet tilaukset ovat noudettavissa seuraavana mahdollisena noutoaikana.' : 'Peltolankaari 20, 90230 Oulu. Fresh orders are ready for collection during the next available pickup window.'}
               </p>
             </div>
           </aside>
@@ -172,7 +134,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
       <section className="container mx-auto pb-16">
         <div className="rounded-[3rem] bg-[#f7ead9] p-8 shadow-soft sm:p-10">
-          <SectionHeading title="Related products" subtitle="More small-batch treats from the same kitchen." />
+          <SectionHeading title={locale === 'fi' ? 'Muut tuotteet' : 'Related products'} subtitle={locale === 'fi' ? 'Lisää saman keittiön pienissä erissä valmistettuja herkkuja.' : 'More small-batch treats from the same kitchen.'} />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {products
               .filter((item) => item.category === product.category && item.id !== product.id)

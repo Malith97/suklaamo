@@ -1,8 +1,13 @@
+'use client';
+
+import { useLocale } from '../context/LocaleContext';
+
 export default function Loading() {
+  const { locale } = useLocale();
   return (
     <main className="min-h-screen bg-background text-text-dark">
       <div className="container mx-auto py-16">
-        <div className="space-y-10 animate-pulse">
+        <div className="space-y-10 animate-pulse" aria-label={locale === 'fi' ? 'Ladataan' : 'Loading'}>
           <div className="h-14 w-2/5 rounded-[2rem] bg-surface" />
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 6 }).map((_, index) => (

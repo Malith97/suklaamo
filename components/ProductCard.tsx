@@ -6,6 +6,8 @@ import SmartImage from './SmartImage';
 import Badge from './Badge';
 import Button from './Button';
 import type { Product } from '../data/products';
+import { getLocalizedProduct } from '../lib/i18n';
+import { useLocale } from '../context/LocaleContext';
 
 const cardHover = {
   rest: { y: 0 },
@@ -29,6 +31,8 @@ export default function ProductCard({
   addToCartDisabled = false,
   addToCartDisabledLabel = 'Maximum order quantity is 10 items. Please contact us for larger orders.',
 }: ProductCardProps) {
+  const { locale, t } = useLocale();
+  const localizedProduct = getLocalizedProduct(product, locale);
   const topContent = (
     <>
       <div className="relative h-72 overflow-hidden bg-[#fbf4ed]">
@@ -47,14 +51,14 @@ export default function ProductCard({
       <div className="flex flex-1 min-w-0 flex-col justify-between space-y-4 p-6">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            {product.tags.slice(0, 2).map((tag) => (
+            {localizedProduct.tags.slice(0, 2).map((tag) => (
               <Badge key={tag} label={tag} variant={tag === 'Gluten-free' ? 'sage' : 'cocoa'} />
             ))}
           </div>
 
           <div className="space-y-2">
             <h2 className="break-words text-xl font-bold text-primary">{product.name}</h2>
-            <p className="break-words text-sm leading-6 text-text-muted line-clamp-3">{product.description}</p>
+            <p className="break-words text-sm leading-6 text-text-muted line-clamp-3">{localizedProduct.description}</p>
           </div>
 
           {/* <dl className="grid gap-3 rounded-[1.5rem] bg-white/70 p-4 text-[0.68rem] uppercase tracking-[0.22em] text-text-muted shadow-soft sm:grid-cols-3">
@@ -77,7 +81,7 @@ export default function ProductCard({
           <span>{product.price}</span>
           <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-text-muted shadow-soft">
             {/* {product.inStock ? 'Fresh batch' : 'Made to order'} Click to View More */}
-            Click to View More
+            {t.common.clickToViewMore}
           </span>
         </div>
       </div>

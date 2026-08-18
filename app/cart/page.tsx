@@ -7,6 +7,8 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import Button from '../../components/Button';
 import { useCart } from '../../context/CartContext';
+import { getLocalizedProduct } from '../../lib/i18n';
+import { useLocale } from '../../context/LocaleContext';
 
 const rowVariants = {
   hidden: { opacity: 0, y: 14 },
@@ -19,6 +21,7 @@ const formatPrice = (value: number) => `€${value}`;
 
 export default function CartPage() {
   const { items, itemCount, removeItem, updateQuantity, clearCart } = useCart();
+  const { locale, t } = useLocale();
 
   const subtotal = items.reduce((sum, item) => sum + parsePrice(item.product.price) * item.quantity, 0);
   const continueShoppingHref = '/catalogue';
@@ -33,19 +36,19 @@ export default function CartPage() {
             <div className="rounded-[2.5rem] bg-white p-8 shadow-soft">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.35em] text-primary">Your cart</p>
-                  <h1 className="mt-3 text-3xl font-black text-text-dark sm:text-4xl">Ready for pickup</h1>
+                  <p className="text-sm uppercase tracking-[0.35em] text-primary">{locale === 'fi' ? 'Ostoskori' : 'Your cart'}</p>
+                  <h1 className="mt-3 text-3xl font-black text-text-dark sm:text-4xl">{locale === 'fi' ? 'Valmiina noutoon' : 'Ready for pickup'}</h1>
                 </div>
-                <p className="text-sm font-semibold text-text-muted">{itemCount} item{itemCount === 1 ? '' : 's'}</p>
+                <p className="text-sm font-semibold text-text-muted">{itemCount} {itemCount === 1 ? t.common.item : t.common.items}</p>
               </div>
             </div>
 
             {items.length === 0 ? (
               <div className="rounded-[2.5rem] bg-[#fff4df] p-10 text-center shadow-soft">
-                <p className="text-xl font-semibold text-primary">Your cart is empty</p>
-                <p className="mt-3 text-sm leading-7 text-text-muted">Browse the catalogue to select your next chocolate treat.</p>
+                <p className="text-xl font-semibold text-primary">{locale === 'fi' ? 'Ostoskori on tyhjä' : 'Your cart is empty'}</p>
+                <p className="mt-3 text-sm leading-7 text-text-muted">{locale === 'fi' ? 'Selaa valikoimaa ja valitse seuraava suklaaherkkusi.' : 'Browse the catalogue to select your next chocolate treat.'}</p>
                 <Link href="/catalogue" className="mt-6 inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#d38a24]">
-                  Browse catalogue
+                  {t.common.browseCatalogue}
                 </Link>
               </div>
             ) : (
@@ -56,6 +59,7 @@ export default function CartPage() {
                       <AnimatePresence initial={false} mode="popLayout">
                         {items.map((item) => {
                           const itemTotal = parsePrice(item.product.price) * item.quantity;
+                          const localizedProduct = getLocalizedProduct(item.product, locale);
                           return (
                             <motion.article key={item.product.id} variants={rowVariants} initial="hidden" animate="visible" exit="exit" className="grid gap-4 rounded-[2rem] border border-border p-4 sm:grid-cols-[120px_1fr]">
                               <div className="relative overflow-hidden rounded-[2rem] bg-[#f8efe0]">
@@ -70,7 +74,7 @@ export default function CartPage() {
                               <div className="flex flex-col justify-between gap-4">
                                 <div>
                                   <h2 className="text-xl font-black text-text-dark">{item.product.name}</h2>
-                                  <p className="mt-2 text-sm leading-6 text-text-muted">{item.product.description}</p>
+                                  <p className="mt-2 text-sm leading-6 text-text-muted">{localizedProduct.description}</p>
                                 </div>
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                   <div className="flex items-center gap-3">
@@ -83,13 +87,13 @@ export default function CartPage() {
                                     </button>
                                   </div>
                                   <div className="space-y-2 text-right">
-                                    <p className="text-sm font-semibold text-primary">{item.product.price} each</p>
+                                    <p className="text-sm font-semibold text-primary">{item.product.price} {t.common.each}</p>
                                     <p className="text-lg font-black text-text-dark">{formatPrice(itemTotal)}</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center justify-between gap-4 text-sm text-text-muted">
                                   <button type="button" onClick={() => removeItem(item.product.id)} className="font-semibold text-primary transition hover:text-[#5b3a1e]">
-                                    Remove
+                                    {t.common.remove}
                                   </button>
                                 </div>
                               </div>
@@ -114,47 +118,47 @@ export default function CartPage() {
 
           <aside className="space-y-6 rounded-[2.5rem] bg-surface p-8 shadow-soft">
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Order summary</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{locale === 'fi' ? 'Tilauksen yhteenveto' : 'Order summary'}</p>
               <div className="mt-6 space-y-4">
                 <div className="flex items-center justify-between text-sm text-text-muted">
-                  <span>Items</span>
+                  <span>{locale === 'fi' ? 'Tuotteet' : 'Items'}</span>
                   <span>{itemCount}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-text-muted">
-                  <span>Subtotal</span>
+                  <span>{t.common.subtotal}</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-text-muted">
-                  <span>VAT</span>
+                  <span>{t.common.vat}</span>
                   <span>€0</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-text-muted">
-                  <span>Delivery</span>
+                  <span>{t.common.delivery}</span>
                   <span>€0</span>
                 </div>
                 <div className="border-t border-border pt-4 text-xl font-black text-text-dark">
-                  <span>Total</span>
+                  <span>{t.common.total}</span>
                   <span className="float-right">{formatPrice(subtotal)}</span>
                 </div>
               </div>
             </div>
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Pickup details</p>
-              <p className="mt-4 text-sm leading-7 text-text-muted">Pickup orders are prepared for local collection from Oulu. We will confirm your exact pickup time on checkout.</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{t.common.pickupDetails}</p>
+              <p className="mt-4 text-sm leading-7 text-text-muted">{locale === 'fi' ? 'Noutotilaukset valmistellaan noudettaviksi Oulussa. Vahvistamme tarkan noutoajan kassalla.' : 'Pickup orders are prepared for local collection from Oulu. We will confirm your exact pickup time on checkout.'}</p>
             </div>
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase tracking-[0.35em] text-primary">Weekend ordering</p>
-              <p className="mt-4 text-sm leading-7 text-text-muted">Reserve your order before Thursday 18:00.</p>
+              <p className="text-sm uppercase tracking-[0.35em] text-primary">{locale === 'fi' ? 'Viikonlopun tilaukset' : 'Weekend ordering'}</p>
+              <p className="mt-4 text-sm leading-7 text-text-muted">{locale === 'fi' ? 'Varaa tilauksesi ennen torstaita klo 18.00.' : 'Reserve your order before Thursday 18:00.'}</p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Link href={continueShoppingHref} className="inline-flex rounded-full border border-[#d9c8b1] bg-white px-5 py-3 text-sm font-semibold text-primary shadow-soft hover:bg-[#fff5df]">
-                Continue Shopping
+                {t.common.continueShopping}
               </Link>
               <Button variant="secondary" type="button" onClick={clearCart} className="rounded-full px-5 py-3">
-                Clear Cart
+                {t.common.clearCart}
               </Button>
               <Link href="/checkout" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#4e2b15]">
-                Continue to Checkout
+                {t.common.continueToCheckout}
               </Link>
               </div>
           </aside>

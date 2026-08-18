@@ -10,6 +10,7 @@ import Button from '../../components/Button';
 import JsonLd from '../../components/JsonLd';
 import { useCart } from '../../context/CartContext';
 import { validateEmail, validateFinnishPhone, validatePickupDate } from '../../lib/validators';
+import { useLocale } from '../../context/LocaleContext';
 
 const ShoppingBag = ShoppingBagRaw as unknown as ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -136,6 +137,43 @@ const policyContent: Record<PolicyKey, { title: string; sections: Array<{ headin
   },
 };
 
+const policyContentFi: Record<PolicyKey, { title: string; sections: Array<{ heading: string; body: string }> }> = {
+  privacy: {
+    title: 'Tietosuojakäytäntö',
+    sections: [
+      { heading: '1. Rekisterinpitäjä', body: 'Suklaamo on Oulussa toimiva kotileipomo. Yhteys: info@suklaamo.fi, Peltolankaari 20, 90230 Oulu.' },
+      { heading: '2. Keräämämme henkilötiedot', body: 'Tilauksen tai yhteydenoton yhteydessä keräämme nimen, puhelinnumeron, sähköpostiosoitteen, noutopäivän, tilaustiedot sekä mahdolliset vapaaehtoisesti antamasi lisätiedot ja allergiatiedot.' },
+      { heading: '3. Käyttötarkoitus ja oikeusperuste', body: 'Tietoja käytetään tilauksen käsittelyyn, vahvistamiseen, noudon järjestämiseen, maksuohjeisiin, kirjanpitoon sekä väärinkäytösten ehkäisyyn GDPR:n mukaisesti.' },
+      { heading: '4. Tietojen säilytys ja luovutus', body: 'Emme myy henkilötietojasi. Tietoja käsittelevät vain Suklaamon toiminta ja sen palveluntarjoajat, ja niitä säilytetään vain tarpeellisen ajan tai lain edellyttämän ajan.' },
+      { heading: '5. Oikeutesi', body: 'Voit pyytää tietojesi tarkastamista, korjaamista, poistamista tai käsittelyn rajoittamista sovellettavan lain mukaisesti. Ota yhteyttä sähköpostilla, niin vastaamme kuukauden kuluessa.' },
+    ],
+  },
+  allergen: {
+    title: 'Allergeenikäytäntö',
+    sections: [
+      { heading: '1. Keittiöympäristö', body: 'Suklaamon tuotteet valmistetaan kotileipomossa Oulussa. Keittiö ei ole allergeeniton, ja käytämme samoja välineitä ja pintoja eri tuotteille.' },
+      { heading: '2. Allergeenit', body: 'Tuotteissa voi olla esimerkiksi gluteenia sisältäviä viljoja, kananmunaa, maitoa, soijaa ja pähkinöitä. Tuotekohtaiset ainesosat ovat saatavilla ennen tilaamista.' },
+      { heading: '3. Ennen tilaamista', body: 'Jos sinulla tai vieraillasi on allergia, intoleranssi tai erityisruokavalio, ota yhteyttä ennen tilaamista. Kerromme kyseisen tuotteen täydet ainesosat.' },
+      { heading: '4. Ristikontakti', body: 'Jaettujen välineiden vuoksi emme voi taata, ettei tuotteiden välillä tapahdu allergeenien ristikontaktia. Vakavan allergian yhteydessä ota aina yhteyttä suoraan.' },
+      { heading: '5. Asiakkaan vastuu', body: 'Tilaamalla vahvistat, että olet tutustunut allergeenitietoihin ja arvioinut tuotteiden sopivuuden itsellesi ja vieraillesi.' },
+    ],
+  },
+  cancellation: {
+    title: 'Peruutus- ja hyvityskäytäntö',
+    sections: [
+      { heading: '1. Lakisääteiset oikeudet', body: 'Tuoreisiin ja tilauksesta valmistettuihin elintarvikkeisiin ei yleensä sovelleta etämyynnin 14 päivän peruuttamisoikeutta. Nämä ehdot kertovat Suklaamon käytännöistä.' },
+      { heading: '2. Tilauspyyntö ja vahvistus', body: 'Verkkosivun kautta lähetetty pyyntö ei vielä ole vahvistettu tilaus. Tarkistamme saatavuuden ja vahvistamme tilauksen erikseen.' },
+      { heading: '3. Maksuaikataulu', body: 'Vahvistettu tilaus tulee maksaa kokonaan viimeistään 24 tuntia ennen sovittua noutoaikaa. Maksun puuttuessa voimme perua tilauksen.' },
+      { heading: '4. Peruutukset ja hyvitykset', body: 'Vähintään 24 tuntia ennen noutoa perutusta tilauksesta palautetaan koko maksu. Alle 24 tuntia ennen noutoa perutusta tilauksesta palautetaan 50 %. Noutamatta jääneestä tilauksesta ei palauteta maksua.' },
+      { heading: '5. Jos me perumme tilauksen', body: 'Jos emme voi toteuttaa tilausta omasta syystämme, tarjoamme vaihtoehdon tai täyden hyvityksen.' },
+      { heading: '6. Hyvityksen tapa ja aika', body: 'Hyvitys palautetaan alkuperäiselle maksutavalle peruutuksen vahvistamisen jälkeen.' },
+      { heading: '7. Noutovastuu', body: 'Asiakas vastaa tilauksen noutamisesta vahvistetun noutoajan aikana. Myöhästynyt tai väliin jäänyt nouto käsitellään edellä kuvatun peruutuskäytännön mukaan.' },
+      { heading: '8. Reklamaatiot', body: 'Jos tilauksessa tai käytännössä on ongelmia, ota ensin yhteyttä Suklaamoon, jotta voimme ratkaista asian suoraan.' },
+      { heading: 'Ehtojen päivitykset', body: 'Suklaamo voi päivittää ehtoja. Tilaukseen sovelletaan tilaushetkellä näkyvää versiota.' },
+    ],
+  },
+};
+
 const getTomorrowDate = () => {
   const tomorrow = new Date();
   tomorrow.setHours(0, 0, 0, 0);
@@ -150,6 +188,11 @@ const getTomorrowDate = () => {
 
 export default function CheckoutPage() {
   const { items, clearCart } = useCart();
+  const { locale, t } = useLocale();
+  const fi = locale === 'fi';
+  const localizedPolicyTabs = fi
+    ? [{ key: 'privacy' as PolicyKey, label: 'Tietosuojakäytäntö' }, { key: 'allergen' as PolicyKey, label: 'Allergeenikäytäntö' }, { key: 'cancellation' as PolicyKey, label: 'Peruutus- ja hyvityskäytäntö' }]
+    : policyTabs;
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -171,6 +214,7 @@ export default function CheckoutPage() {
   const [isPolicyDialogOpen, setIsPolicyDialogOpen] = useState(false);
   const [activePolicy, setActivePolicy] = useState<PolicyKey>('privacy');
   const [minPickupDate, setMinPickupDate] = useState('');
+  const activePolicyContent = (fi ? policyContentFi : policyContent)[activePolicy];
 
   useEffect(() => {
     setMinPickupDate(getTomorrowDate());
@@ -200,24 +244,24 @@ export default function CheckoutPage() {
     const sanitizedValue = value.trim();
 
     if (field === 'name') {
-      if (!sanitizedValue) return 'Name is required.';
+      if (!sanitizedValue) return fi ? 'Nimi on pakollinen.' : 'Name is required.';
       return '';
     }
 
     if (field === 'phone') {
-      if (!sanitizedValue) return 'Phone is required.';
-      if (!validateFinnishPhone(sanitizedValue)) return 'Please enter a valid Finnish phone number.';
+      if (!sanitizedValue) return fi ? 'Puhelinnumero on pakollinen.' : 'Phone is required.';
+      if (!validateFinnishPhone(sanitizedValue)) return fi ? 'Anna kelvollinen suomalainen puhelinnumero.' : 'Please enter a valid Finnish phone number.';
       return '';
     }
 
     if (field === 'email') {
-      if (!sanitizedValue) return 'Email is required.';
-      if (!validateEmail(sanitizedValue)) return 'Please enter a valid email address.';
+      if (!sanitizedValue) return fi ? 'Sähköposti on pakollinen.' : 'Email is required.';
+      if (!validateEmail(sanitizedValue)) return fi ? 'Anna kelvollinen sähköpostiosoite.' : 'Please enter a valid email address.';
       return '';
     }
 
-    if (!sanitizedValue) return 'Pickup date is required.';
-    if (!validatePickupDate(sanitizedValue)) return 'Pickup date must be in the future.';
+    if (!sanitizedValue) return fi ? 'Noutopäivä on pakollinen.' : 'Pickup date is required.';
+    if (!validatePickupDate(sanitizedValue)) return fi ? 'Noutopäivän on oltava tulevaisuudessa.' : 'Pickup date must be in the future.';
     return '';
   };
 
@@ -257,7 +301,7 @@ export default function CheckoutPage() {
   );
 
   const policyValidationError = policyTouched && !acceptedPolicies
-    ? 'Please confirm that you agree to the Privacy Policy, Allergen Information Policy and Cancellation & Refund Policy.'
+    ? (fi ? 'Vahvista, että hyväksyt tietosuojakäytännön, allergeenikäytännön ja peruutus- ja hyvityskäytännön.' : 'Please confirm that you agree to the Privacy Policy, Allergen Information Policy and Cancellation & Refund Policy.')
     : '';
   const policyServerError = errors.policyAccepted ?? '';
   const policyError = policyValidationError || policyServerError;
@@ -307,7 +351,7 @@ export default function CheckoutPage() {
       });
       result = await response.json();
     } catch {
-      setServerError('Unable to submit your order request. Please check your connection and try again.');
+      setServerError(fi ? 'Tilauspyynnön lähettäminen ei onnistunut. Tarkista yhteytesi ja yritä uudelleen.' : 'Unable to submit your order request. Please check your connection and try again.');
       setStatus('error');
       return;
     }
@@ -316,7 +360,7 @@ export default function CheckoutPage() {
       if (result.errors && typeof result.errors === 'object' && result.errors !== null) {
         setErrors(result.errors as Record<string, string>);
       } else {
-        setServerError(typeof result.error === 'string' ? result.error : 'Unable to submit your order request. Please try again later.');
+        setServerError(typeof result.error === 'string' ? result.error : (fi ? 'Tilauspyynnön lähettäminen ei onnistunut. Yritä myöhemmin uudelleen.' : 'Unable to submit your order request. Please try again later.'));
       }
       setStatus('error');
       return;
@@ -334,23 +378,23 @@ export default function CheckoutPage() {
         <Navbar />
         <section className="flex-1 container mx-auto py-16">
           <div className="rounded-[3rem] bg-white p-10 text-center shadow-soft">
-            <p className="text-sm uppercase tracking-[0.35em] text-primary">Order placed</p>
-            <h1 className="mt-4 text-4xl font-black text-text-dark">Thank you</h1>
+            <p className="text-sm uppercase tracking-[0.35em] text-primary">{fi ? 'Tilaus lähetetty' : 'Order placed'}</p>
+            <h1 className="mt-4 text-4xl font-black text-text-dark">{fi ? 'Kiitos' : 'Thank you'}</h1>
             {orderNumber ? (
               <div className="mt-6 rounded-[1.5rem] border border-border bg-[#fbf7f0] p-5">
-                <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Order Number</p>
+                <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{fi ? 'Tilausnumero' : 'Order Number'}</p>
                 <p className="mt-2 text-2xl font-black text-primary">{orderNumber}</p>
               </div>
             ) : null}
             <p className="mt-4 text-sm leading-7 text-text-muted">
-              Your order request has been received. A confirmation email has been sent to {email}. Keep your order number for reference. We will contact you shortly to confirm availability and pickup details.
+              {fi ? `Tilauspyyntösi on vastaanotettu. Vahvistusviesti on lähetetty osoitteeseen ${email}. Säilytä tilausnumero myöhempää käyttöä varten. Otamme pian yhteyttä saatavuuden ja noutotietojen vahvistamiseksi.` : `Your order request has been received. A confirmation email has been sent to ${email}. Keep your order number for reference. We will contact you shortly to confirm availability and pickup details.`}
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Link href="/catalogue" className="inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#d38a24]">
-                Continue shopping
+                {t.common.continueShopping}
               </Link>
               <Link href="/" className="inline-flex rounded-full border border-border bg-white px-6 py-3 text-sm font-semibold text-primary shadow-soft hover:bg-[#fff5df]">
-                Back home
+                {t.common.backHome}
               </Link>
             </div>
           </div>
@@ -368,16 +412,16 @@ export default function CheckoutPage() {
           <motion.div variants={fieldVariants} initial="hidden" animate="visible" className="space-y-6">
             <div className="rounded-[3rem] bg-white p-8 shadow-soft">
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-primary">Checkout</p>
-                <h1 className="mt-3 text-3xl font-black text-text-dark sm:text-4xl">Place your order request</h1>
+                <p className="text-sm uppercase tracking-[0.35em] text-primary">{fi ? 'Kassa' : 'Checkout'}</p>
+                <h1 className="mt-3 text-3xl font-black text-text-dark sm:text-4xl">{fi ? 'Lähetä tilauspyyntösi' : 'Place your order request'}</h1>
               </div>
 
               {!items.length ? (
                 <div className="mt-8 rounded-[2.5rem] bg-[#fff4df] p-10 text-center">
-                  <p className="text-lg font-semibold text-primary">No items in cart</p>
-                  <p className="mt-3 text-sm leading-7 text-text-muted">Add something from the catalogue before checking out.</p>
+                  <p className="text-lg font-semibold text-primary">{fi ? 'Ostoskorissa ei ole tuotteita' : 'No items in cart'}</p>
+                  <p className="mt-3 text-sm leading-7 text-text-muted">{fi ? 'Lisää jotain valikoimasta ennen kassalle siirtymistä.' : 'Add something from the catalogue before checking out.'}</p>
                   <Link href="/catalogue" className="mt-6 inline-flex rounded-full bg-accent-gold px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-[#d38a24]">
-                    Browse catalogue
+                    {t.common.browseCatalogue}
                   </Link>
                 </div>
               ) : (
@@ -385,7 +429,7 @@ export default function CheckoutPage() {
                 <div className="grid gap-6 sm:grid-cols-2">
                   <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.name ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                      Name
+                      {fi ? 'Nimi' : 'Name'}
                     </span>
                     <input
                       value={name}
@@ -409,7 +453,7 @@ export default function CheckoutPage() {
                   </label>
                   <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.phone ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                      Phone
+                      {fi ? 'Puhelin' : 'Phone'}
                     </span>
                     <input
                       value={phone}
@@ -436,7 +480,7 @@ export default function CheckoutPage() {
                 <div className="grid gap-6 sm:grid-cols-2">
                   <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.email ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                      Email
+                      {fi ? 'Sähköposti' : 'Email'}
                     </span>
                     <input
                       type="email"
@@ -461,7 +505,7 @@ export default function CheckoutPage() {
                   </label>
                   <label className={`group relative block overflow-hidden rounded-[1.75rem] border bg-[#fbf7f0] px-4 pb-3 pt-6 text-sm text-text-dark transition focus-within:ring-2 ${errors.pickupDate ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-200' : 'border-border focus-within:border-primary/70 focus-within:ring-primary/20'}`}>
                     <span className="absolute left-4 top-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                      Pickup date
+                      {fi ? 'Noutopäivä' : 'Pickup date'}
                     </span>
                     <input
                       type="date"
@@ -488,7 +532,7 @@ export default function CheckoutPage() {
                 </div>
                 <label className="group relative block rounded-[1.75rem] border border-border bg-[#fbf7f0] text-sm text-text-dark transition focus-within:border-primary/70 focus-within:ring-2 focus-within:ring-primary/20">
                   <span className="block px-4 pt-3 text-xs uppercase tracking-[0.28em] text-text-muted transition-all group-focus-within:text-primary">
-                    Notes
+                    {fi ? 'Lisätiedot' : 'Notes'}
                   </span>
                   <textarea
                     value={notes}
@@ -520,7 +564,7 @@ export default function CheckoutPage() {
                       className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary/30"
                     />
                     <label htmlFor="checkout-policy-acceptance" className="text-sm leading-7 text-text-muted">
-                      I have read and agree to the Privacy Policy, Allergen Information Policy and Cancellation & Refund Policy.
+                      {fi ? 'Olen lukenut ja hyväksyn tietosuojakäytännön, allergeenikäytännön sekä peruutus- ja hyvityskäytännön.' : 'I have read and agree to the Privacy Policy, Allergen Information Policy and Cancellation & Refund Policy.'}
                     </label>
                   </div>
 
@@ -529,7 +573,7 @@ export default function CheckoutPage() {
                     onClick={() => setIsPolicyDialogOpen(true)}
                     className="mt-3 text-sm font-semibold text-primary underline underline-offset-4 hover:text-[#5b3a1e]"
                   >
-                    View Policies
+                    {t.common.viewPolicies}
                   </button>
 
                   {policyError ? (
@@ -542,7 +586,7 @@ export default function CheckoutPage() {
                 {serverError ? <p className="text-sm text-red-600">{serverError}</p> : null}
                 <Button type="submit" className="w-full inline-flex items-center justify-center gap-2" disabled={isSubmitDisabled}>
                   <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-                  {status === 'submitting' ? 'Submitting...' : 'Place Order Request'}
+                  {status === 'submitting' ? t.common.submitting : (fi ? 'Lähetä tilauspyyntö' : 'Place Order Request')}
                 </Button>
               </form>
               )}
@@ -550,37 +594,37 @@ export default function CheckoutPage() {
 
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Pickup information</p>
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Noutotiedot' : 'Pickup information'}</p>
                 <div className="mt-4 space-y-3 text-sm leading-7 text-text-muted">
-                  <p><span className="font-semibold text-text-dark">Pickup Address:</span><br />Peltolankaari 20<br />90230 Oulu</p>
-                  <p><span className="font-semibold text-text-dark">Pickup Hours:</span><br />Friday: 17:00–21:00<br />Saturday–Sunday: 16:00–20:00</p>
+                  <p><span className="font-semibold text-text-dark">{fi ? 'Nouto-osoite:' : 'Pickup Address:'}</span><br />Peltolankaari 20<br />90230 Oulu</p>
+                  <p><span className="font-semibold text-text-dark">{fi ? 'Noutoajat:' : 'Pickup Hours:'}</span><br />{fi ? 'Perjantai: 17.00–21.00' : 'Friday: 17:00–21:00'}<br />{fi ? 'Lauantai–sunnuntai: 16.00–20.00' : 'Saturday–Sunday: 16:00–20:00'}</p>
                 </div>
               </div>
 
               <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Payment information</p>
+                <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Maksutiedot' : 'Payment information'}</p>
                 <div className="mt-4 space-y-3 text-sm leading-7 text-text-muted">
-                  <p><span className="font-semibold text-text-dark">Payment Methods:</span><br />MobilePay<br />Bank Transfer</p>
-                  <p>Card payments are currently unavailable.</p>
-                  <p>We will send payment instructions after confirming your order.</p>
+                  <p><span className="font-semibold text-text-dark">{fi ? 'Maksutavat:' : 'Payment Methods:'}</span><br />MobilePay<br />{fi ? 'Pankkisiirto' : 'Bank Transfer'}</p>
+                  <p>{fi ? 'Korttimaksut eivät ole tällä hetkellä käytössä.' : 'Card payments are currently unavailable.'}</p>
+                  <p>{fi ? 'Lähetämme maksuohjeet tilauksen vahvistamisen jälkeen.' : 'We will send payment instructions after confirming your order.'}</p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Checkout FAQ</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Kassan usein kysytyt kysymykset' : 'Checkout FAQ'}</p>
               <div className="mt-4 space-y-4 text-sm leading-7 text-text-muted">
-                <p><span className="font-semibold text-text-dark">What if my item isn&apos;t available?</span><br />We will contact you and provide alternatives or cancel the order.</p>
-                <p><span className="font-semibold text-text-dark">Can I cancel my order?</span><br />Orders may be cancelled before confirmation.</p>
-                <p><span className="font-semibold text-text-dark">Where do I pick up my order?</span><br />Peltolankaari 20, 90230 Oulu.</p>
-                <p><span className="font-semibold text-text-dark">When will I hear back?</span><br />We typically respond within a few hours during operating days.</p>
+                <p><span className="font-semibold text-text-dark">{fi ? 'Mitä jos tuotetta ei ole saatavilla?' : 'What if my item isn&apos;t available?'}</span><br />{fi ? 'Otamme yhteyttä ja tarjoamme vaihtoehtoja tai perumme tilauksen.' : 'We will contact you and provide alternatives or cancel the order.'}</p>
+                <p><span className="font-semibold text-text-dark">{fi ? 'Voinko perua tilaukseni?' : 'Can I cancel my order?'}</span><br />{fi ? 'Tilauksen voi perua ennen vahvistamista.' : 'Orders may be cancelled before confirmation.'}</p>
+                <p><span className="font-semibold text-text-dark">{fi ? 'Mistä noudan tilaukseni?' : 'Where do I pick up my order?'}</span><br />Peltolankaari 20, 90230 Oulu.</p>
+                <p><span className="font-semibold text-text-dark">{fi ? 'Milloin saan vastauksen?' : 'When will I hear back?'}</span><br />{fi ? 'Vastaamme yleensä muutaman tunnin kuluessa aukiolopäivinä.' : 'We typically respond within a few hours during operating days.'}</p>
               </div>
             </div>
           </motion.div>
 
           <motion.aside variants={fieldVariants} initial="hidden" animate="visible" className="space-y-6 rounded-[3rem] bg-surface p-8 shadow-soft lg:sticky lg:top-28">
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order summary</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Tilauksen yhteenveto' : 'Order summary'}</p>
               <div className="mt-6 space-y-4">
                 {items.map((item) => (
                   <div key={item.product.id} className="flex items-start justify-between gap-4">
@@ -593,33 +637,33 @@ export default function CheckoutPage() {
                 ))}
                 <div className="border-t border-border pt-4">
                   <div className="flex items-center justify-between text-sm text-text-muted">
-                    <span>Total</span>
+                    <span>{t.common.total}</span>
                     <span className="font-black text-text-dark">{formatPrice(totalAmount)}</span>
                   </div>
                 </div>
               </div>
             </div>
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">How it works</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Näin se toimii' : 'How it works'}</p>
               <ol className="mt-4 space-y-4 text-sm leading-7 text-text-muted">
                 <li>
-                  <span className="font-semibold text-text-dark">1.</span> Submit your order request.
+                  <span className="font-semibold text-text-dark">1.</span> {fi ? 'Lähetä tilauspyyntösi.' : 'Submit your order request.'}
                 </li>
                 <li>
-                  <span className="font-semibold text-text-dark">2.</span> We will contact you on WhatsApp to confirm availability and pickup details.
+                  <span className="font-semibold text-text-dark">2.</span> {fi ? 'Otamme yhteyttä WhatsAppissa saatavuuden ja noutotietojen vahvistamiseksi.' : 'We will contact you on WhatsApp to confirm availability and pickup details.'}
                 </li>
                 <li>
-                  <span className="font-semibold text-text-dark">3.</span> Once confirmed, payment instructions will be shared.
+                  <span className="font-semibold text-text-dark">3.</span> {fi ? 'Vahvistamisen jälkeen lähetämme maksuohjeet.' : 'Once confirmed, payment instructions will be shared.'}
                 </li>
                 <li>
-                  <span className="font-semibold text-text-dark">4.</span> Your order will be prepared for the agreed pickup date.
+                  <span className="font-semibold text-text-dark">4.</span> {fi ? 'Tilauksesi valmistetaan sovituksi noutopäiväksi.' : 'Your order will be prepared for the agreed pickup date.'}
                 </li>
               </ol>
             </div>
             <div className="rounded-[2rem] bg-white p-6 shadow-soft">
-              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">Order terms</p>
+              <p className="text-sm uppercase font-black tracking-[0.35em] text-primary">{fi ? 'Tilaehdot' : 'Order terms'}</p>
               <p className="mt-4 text-sm leading-7 text-text-muted">
-                Orders are confirmed after availability review. Reserve your order before Thursday 18:00 for weekend pickup.
+                {fi ? 'Tilaukset vahvistetaan saatavuuden tarkistamisen jälkeen. Varaa tilaus ennen torstaita klo 18.00 viikonlopun noutoa varten.' : 'Orders are confirmed after availability review. Reserve your order before Thursday 18:00 for weekend pickup.'}
               </p>
             </div>
           </motion.aside>
@@ -647,20 +691,20 @@ export default function CheckoutPage() {
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-border px-6 py-5 sm:px-8">
-                <h2 id="checkout-policy-title" className="text-xl font-black text-primary">Suklaamo Policies</h2>
+                <h2 id="checkout-policy-title" className="text-xl font-black text-primary">{fi ? 'Suklaamon käytännöt' : 'Suklaamo Policies'}</h2>
                 <button
                   type="button"
                   onClick={() => setIsPolicyDialogOpen(false)}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-primary transition hover:bg-[#fff5df]"
-                  aria-label="Close policy viewer"
+                  aria-label={fi ? 'Sulje ehtojen katselu' : 'Close policy viewer'}
                 >
                   ×
                 </button>
               </div>
 
               <div className="px-6 pt-5 sm:px-8">
-                <div role="tablist" aria-label="Policy navigation" className="flex flex-wrap gap-2">
-                  {policyTabs.map((tab) => (
+                <div role="tablist" aria-label={fi ? 'Ehtojen navigointi' : 'Policy navigation'} className="flex flex-wrap gap-2">
+                  {localizedPolicyTabs.map((tab) => (
                     <button
                       key={tab.key}
                       type="button"
@@ -681,8 +725,8 @@ export default function CheckoutPage() {
 
               <div className="max-h-[62vh] overflow-y-auto px-6 pb-8 pt-5 sm:px-8">
                 <div role="tabpanel" className="space-y-5">
-                  <h3 className="text-lg font-black text-text-dark">{policyContent[activePolicy].title}</h3>
-                  {policyContent[activePolicy].sections.map((section) => (
+                    <h3 className="text-lg font-black text-text-dark">{activePolicyContent.title}</h3>
+                  {activePolicyContent.sections.map((section) => (
                     <div key={section.heading} className="rounded-[1.5rem] bg-[#fbf7f0] p-5">
                       <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{section.heading}</p>
                       <p className="mt-3 text-sm leading-7 text-text-muted">{section.body}</p>

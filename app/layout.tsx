@@ -5,6 +5,7 @@ import { Fredoka, Inter } from 'next/font/google';
 import PromoTicker from '../components/PromoTicker';
 import Analytics from '../components/Analytics';
 import JsonLd from '../components/JsonLd';
+import { LocaleProvider } from '../context/LocaleContext';
 import {
   buildLocalBusinessSchema,
   buildWebsiteSchema,
@@ -87,11 +88,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-FI" className={`${fredoka.variable} ${inter.variable}`}>
       <body suppressHydrationWarning className="pt-12 bg-background text-text-dark">
-        <PromoTicker />
-        <Analytics />
-        <JsonLd data={buildLocalBusinessSchema()} />
-        <JsonLd data={buildWebsiteSchema()} />
-        {children}
+        <LocaleProvider>
+          <PromoTicker />
+          <Analytics />
+          <JsonLd data={buildLocalBusinessSchema()} />
+          <JsonLd data={buildWebsiteSchema()} />
+          {children}
+        </LocaleProvider>
       </body>
     </html>
   );

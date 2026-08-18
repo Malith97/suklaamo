@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Button from './Button';
 import type { Product } from '../data/products';
 import { MAX_CART_QUANTITY, MAX_CART_QUANTITY_MESSAGE, useCart } from '../context/CartContext';
+import { useLocale } from '../context/LocaleContext';
 
 type ToastState = {
   kind: 'success' | 'error';
@@ -18,6 +19,7 @@ type ProductPurchaseActionsProps = {
 
 export default function ProductPurchaseActions({ product, className = '' }: ProductPurchaseActionsProps) {
   const { addItem, itemCount } = useCart();
+  const { locale, t } = useLocale();
   const [toast, setToast] = useState<ToastState | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
@@ -33,8 +35,8 @@ export default function ProductPurchaseActions({ product, className = '' }: Prod
     const result = addItem(product);
     setToast(
       result.success
-        ? { kind: 'success', message: `${product.name} added to cart.` }
-        : { kind: 'error', message: result.message },
+        ? { kind: 'success', message: `${product.name} ${locale === 'fi' ? 'lisättiin ostoskoriin.' : 'added to cart.'}` }
+        : { kind: 'error', message: locale === 'fi' ? 'Tilausraja on 10 tuotetta. Ota yhteyttä suuremmista tilauksista.' : result.message },
     );
 
     if (timeoutRef.current) {
@@ -53,9 +55,9 @@ export default function ProductPurchaseActions({ product, className = '' }: Prod
     <div className={className}>
       <div className="space-y-3">
         <Button type="button" onClick={handleAddToCart} className="w-full" disabled={isLimitReached}>
-          {isLimitReached ? 'Order limit reached' : 'Add to cart'}
+          {isLimitReached ? t.common.orderLimitReached : t.common.addToCart}
         </Button>
-        {isLimitReached ? <p className="text-xs leading-6 text-[#8d3b28]">{MAX_CART_QUANTITY_MESSAGE}</p> : null}
+        {isLimitReached ? <p className="text-xs leading-6 text-[#8d3b28]">{locale === 'fi' ? 'Tilausraja on 10 tuotetta. Ota yhteyttä suuremmista tilauksista.' : MAX_CART_QUANTITY_MESSAGE}</p> : null}
       </div>
 
       <AnimatePresence>
