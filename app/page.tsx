@@ -86,7 +86,7 @@ export default function Home() {
             <p className="text-sm uppercase tracking-[0.45em] text-accent-gold">Suklaamo</p>
             <h1 className="text-5xl font-black uppercase leading-tight tracking-[-0.05em] text-primary sm:text-6xl lg:text-7xl">
               {locale === 'fi' ? 'Kotitekoisia suomalaisia' : 'Home-baked Finnish'}
-              <span className="block text-accent-cocoa">{locale === 'fi' ? 'suklaherkkuja' : 'chocolate treats'}</span>
+              <span className="block text-accent-cocoa">{locale === 'fi' ? 'suklaaherkkuja' : 'chocolate treats'}</span>
             </h1>
             <p className="max-w-2xl text-base leading-8 text-[#5a4030] sm:text-lg">
               {locale === 'fi' ? 'Jokainen herkku tulee keittiöstäni Oulussa. Browniet, keksit ja pienet kakut syntyvät hyvästä suklaasta, vahvasta kahvista ja lämpimästä vastaanotosta.' : 'Every treat comes from my kitchen in Oulu. Brownies, cookies and small cakes made with good chocolate, a steady coffee and a warm welcome.'}
@@ -192,7 +192,7 @@ export default function Home() {
               imgClassName="object-cover transition duration-500 group-hover:scale-105"
             />
               <div className="absolute left-6 top-6 rounded-full border border-accent-sage/40 bg-[#1f120c]/80 px-4 py-2 text-xs uppercase tracking-[0.35em] text-accent-sage shadow-soft">
-                {locale === 'fi' ? 'Visuaalinen päärooli' : 'Visual hero'}
+                {locale === 'fi' ? 'Kohokuva' : 'Visual hero'}
               </div>
             </motion.div>
 
@@ -276,7 +276,7 @@ export default function Home() {
         <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div>
             <p className="uppercase tracking-[0.35em] text-primary">{locale === 'fi' ? 'Paikallisten suosikki' : 'Loved by locals'}</p>
-            <h2 className="mt-4 text-3xl font-black text-primary sm:text-4xl">{locale === 'fi' ? 'Paikallisten suosikki Oulussa ja sen ympärillä' : 'Loved by locals across Oulu and beyond'}</h2>
+            <h2 className="mt-4 text-3xl font-black text-primary sm:text-4xl">{locale === 'fi' ? 'Paikallisten suosikki Oulussa ja lähialueilla' : 'Loved by locals across Oulu and beyond'}</h2>
             <p className="mt-5 max-w-3xl text-base leading-8 text-[#5a4030]">
               {locale === 'fi' ? 'Nämä herkut tekevät rauhallisista kahvihetkistä odottamisen arvoisia. Brownieita tuodaan syntymäpäiville, pieniä kakkuja perhejuhliin ja keksejä jaettavaksi aamulenkin jälkeen.' : 'These treats turn quiet coffee moments into something to look forward to. People bring brownies for birthdays, small cakes for family gatherings and cookies to share after a morning walk.'}
             </p>

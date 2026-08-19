@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 text-sm text-text-dark md:flex-row md:items-center md:justify-between md:px-8">
         <div className="space-y-2">
           <p className="text-lg font-bold uppercase tracking-[0.35em] text-primary">Suklaamo</p>
-          <p className="max-w-xl text-sm text-[#4d3a2d]">{locale === 'fi' ? 'Lämmin suomalainen kotileipomo, jossa browniet, keksit ja pienet kakut syntyvät suklaa edellä. Nouto Oulussa.' : 'A warm Finnish home bakery making brownies, cookies, and small cakes with chocolate first. Pickup in Oulu, Finland.'}</p>
+          <p className="max-w-xl text-sm text-[#4d3a2d]">{locale === 'fi' ? 'Lämmin suomalainen kotileipomo, jossa browniet, keksit ja pienet kakut syntyvät niin, että suklaa on aina pääosassa. Nouto Oulussa.' : 'A warm Finnish home bakery making brownies, cookies, and small cakes with chocolate first. Pickup in Oulu, Finland.'}</p>
           {BUSINESS_TELEPHONE ? (
             <p className="pt-1 text-sm text-[#4d3a2d]">
               <span className="font-semibold">{locale === 'fi' ? 'Puhelin:' : 'Phone:'}</span>{' '}
